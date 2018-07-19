@@ -1,0 +1,88 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Information Classification Assessment" %}{% endblock %}
+
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">Information Classification Assessment</h1>
+  </header>
+  <br>
+  <div class="w3-container w3-card-4">
+
+
+
+   <h4>Information Classification</h4>
+    <span hidden>{{ informationclassification.app }}</span>
+  <table class="w3-table-all w3-hoverable">
+    <thead>
+      <th>Description</th>
+      <th>Yes/No</th>
+      <th>Classification</th>
+    </thead>
+    <tbody>
+      <tr class="w3-padding w3-border w3-pale-yellow">
+        <td>Personal health information</td>
+        <td>{% if informationclassification.medical_in_confidence %}<span class='w3-text-green'><i class="fa fa-check-circle fa-fw fa-2x"></i></span>{% else %}<span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-2x"></i></span>{% endif %}</td>
+        <td>MEDICAL IN CONFIDENCE</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-yellow">
+        <td>Identifiable employee and practitioner information that is not intended for the public domain</td>
+        <td>{% if informationclassification.staff_in_confidence %}<span class='w3-text-green'><i class="fa fa-check-circle fa-fw fa-2x"></i></span>{% else %}<span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-2x"></i></span>{% endif %}</td>
+        <td>STAFF IN CONFIDENCE</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-yellow">
+        <td>Commercially sensitive information that needs protection from unauthorised access</td>
+        <td>{% if informationclassification.commercial_in_confidence %}<span class='w3-text-green'><i class="fa fa-check-circle fa-fw fa-2x"></i></span>{% else %}<span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-2x"></i></span>{% endif %}</td>
+        <td>COMMERCIAL IN CONFIDENCE</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-green">
+        <td>Statistical or financial information that is non–identifiable</td>
+        <td>{% if informationclassification.statistical_unclassified %}<span class='w3-text-green'><i class="fa fa-check-circle fa-fw fa-2x"></i></span>{% else %}<span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-2x"></i></span>{% endif %}</td>
+        <td>UNCLASSIFIED</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-green">
+        <td>All other information</td>
+        <td>{% if informationclassification.unclassified %}<span class='w3-text-green'><i class="fa fa-check-circle fa-fw fa-2x"></i></span>{% else %}<span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-2x"></i></span>{% endif %}</td>
+        <td>UNCLASSIFIED</td>
+      </tr>
+    </tbody>
+  </table><br/>
+  <h4>Special Handling</h4>
+  <table class="w3-table-all w3-hoverable">
+    <thead>
+      <th>Subject Matter</th>
+      <th>Yes/No</th>
+    </thead>
+    <tbody>
+      <tr class="w3-padding w3-border w3-pale-red">
+        <td>Sensitive patient information (eg VIP’s)</td>
+        <td>{% if informationclassification.special_handling_sensitive_patient %}<span class='w3-text-green'><i class="fa fa-check-circle fa-fw fa-2x"></i></span>{% else %}<span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-2x"></i></span>{% endif %}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-red">
+        <td>Sensitive categories of disease (eg Mental Health)</td>
+        <td>{% if informationclassification.special_handling_sensitive_disease %}<span class='w3-text-green'><i class="fa fa-check-circle fa-fw fa-2x"></i></span>{% else %}<span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-2x"></i></span>{% endif %}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-red">
+        <td>Sensitive subjects (violence and abuse; pandemics)</td>
+        <td>{% if informationclassification.special_handling_sensitive_abuse %}<span class='w3-text-green'><i class="fa fa-check-circle fa-fw fa-2x"></i></span>{% else %}<span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-2x"></i></span>{% endif %}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-red">
+        <td>Other</td>
+        <td>{% if informationclassification.special_handling_sensitive_other %}{{ informationclassification.special_handling_sensitive_other }}{% endif %}</td>
+      </tr>
+    </tbody>
+  </table>
+    
+    <a class="w3-button w3-section w3-red w3-large w3-ripple" href="{% url 'assess:application-detail' informationclassification.app %}">{% trans "Cancel" %}</a>
+    <a class="w3-button w3-section w3-blue w3-large w3-ripple" href="{% url 'assess:informationclassification-update' informationclassification.app %}">{% trans "Edit" %}</a>
+    <a class="w3-button w3-section w3-orange w3-large w3-ripple" href="{% url 'assess:informationclassification-delete' informationclassification.app %}">{% trans "Delete" %}</a>
+  </div>
+</div>
+{% endblock %}

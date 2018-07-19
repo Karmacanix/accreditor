@@ -1,0 +1,88 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Information Classification Form" %}{% endblock %}
+
+{% block content %}<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    {% if informationclassification %}
+      <h1 class="w3-margin">Edit information classification assessment</h1>
+    {% else %}
+      <h1 class="w3-margin">New information classification assessment</h1>
+    {% endif %}
+  </header>
+  <br>
+<form class="w3-container w3-card-4" action="" method="post">
+   {% csrf_token %}
+   <h4>Information Classification</h4>
+    <span hidden>{{ form.app }}</span>
+  <table class="w3-table-all w3-hoverable">
+    <thead>
+      <th>Description</th>
+      <th>Yes/No</th>
+      <th>Classification</th>
+    </thead>
+  	<tbody>
+  		<tr class="w3-padding w3-border w3-pale-yellow">
+        <td>{{ form.medical_in_confidence.help_text }}</td>
+        <td>{{ form.medical_in_confidence }}</td>
+  			<td>{{ form.medical_in_confidence.label|upper }}</td>
+  		</tr>
+      <tr class="w3-padding w3-border w3-pale-yellow">
+        <td>{{ form.staff_in_confidence.help_text }}</td>
+        <td>{{ form.staff_in_confidence }}</td>
+        <td>{{ form.staff_in_confidence.label|upper }}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-yellow">
+        <td>{{ form.commercial_in_confidence.help_text }}</td>
+        <td>{{ form.commercial_in_confidence }}</td>
+        <td>{{ form.commercial_in_confidence.label|upper }}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-green">
+        <td>{{ form.statistical_unclassified.help_text }}</td>
+        <td>{{ form.statistical_unclassified }}</td>
+        <td>{{ form.statistical_unclassified.label|upper }}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-green">
+        <td>{{ form.unclassified.help_text }}</td>
+        <td>{{ form.unclassified }}</td>
+        <td>{{ form.unclassified.label|upper }}</td>
+      </tr>
+  	</tbody>
+  </table><br/>
+  <h4>Special Handling</h4>
+  <table class="w3-table-all w3-hoverable">
+    <thead>
+      <th>Subject Matter</th>
+      <th>Yes/No</th>
+    </thead>
+    <tbody>
+      <tr class="w3-padding w3-border w3-pale-red">
+        <td>{{ form.special_handling_sensitive_patient.help_text }}</td>
+        <td>{{ form.special_handling_sensitive_patient }}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-red">
+        <td>{{ form.special_handling_sensitive_disease.help_text }}</td>
+        <td>{{ form.special_handling_sensitive_disease }}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-red">
+        <td>{{ form.special_handling_sensitive_abuse.help_text }}</td>
+        <td>{{ form.special_handling_sensitive_abuse }}</td>
+      </tr>
+      <tr class="w3-padding w3-border w3-pale-red">
+        <td>{{ form.special_handling_sensitive_other.help_text }}</td>
+        <td>{{ form.special_handling_sensitive_other }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <a class="w3-button w3-section w3-red w3-large w3-ripple" href="{% url 'assess:application-detail' view.kwargs.pk %}">{% trans "Cancel" %}</a>
+    <button class="primaryAction w3-button w3-section w3-blue w3-large w3-ripple" type="submit">{% trans "Save" %}</button>
+    
+</form>
+</div>
+
+{% endblock %}

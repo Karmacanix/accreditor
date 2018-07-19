@@ -1,0 +1,29 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+{% load assess_tags %}
+
+{% block head_title %}{% trans "CAT Meeting" %}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">CAT Meeting</h1>
+  </header>
+  <br>
+  {% if catmeeting %}
+  <h3>Details</h3>
+  <div class="w3-container w3-card-4">
+    <ul class="w3-ul">
+      <li><strong><small>Date:</small></strong> {{ catmeeting.meeting_date }}</li>
+      <li><strong><small>Attendees:</small></strong> {{ catmeeting.attendees }}</li>
+      <li><strong><small>Location:</small></strong> {{ catmeeting.meeting_location }}</li>
+      <li><strong><small>Minutes:</small></strong> {{ application.meeting_minutes }}</li>
+    </ul>
+   </div>
+  <br>
+{% endif %}
+{% endblock %}

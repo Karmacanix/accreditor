@@ -1,0 +1,71 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "ICT Risk Assessment" %}{% endblock %}
+
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">ICT Risk Assessment</h1>
+  </header>
+  <br>
+  <div class="w3-container w3-card-4">
+    <span hidden>{{ ictriskassessment.app }}</span>
+ <div class="w3-row w3-padding">
+      <div class="w3-col m6 l6"><h4><strong>Description</strong></h4></div>
+      <div class="w3-col m6 l6"><h4><strong>Your answer</strong></h4></div>
+    </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_termsconditions_URL_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding"><a href="{{ ictriskassessment.termsconditions_URL }}">{{ ictriskassessment.termsconditions_URL }}</a></div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_privacypolicy_URL_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding"><a href="{{ ictriskassessment.privacypolicy_URL }}">{{ ictriskassessment.privacypolicy_URL }}</a></div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_record_volume_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_record_volume_display }} of records.</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_downtime_before_critical_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_downtime_before_critical_display }} before the service is interrupted.</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_log_data_changes_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_log_data_changes_display }} data loss logged/alerted.</div>
+      </div>
+   <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_small_data_loss_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_small_data_loss_display }}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_large_data_loss_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_large_data_loss_display }}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_breach_plan_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_breach_plan_display }}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_disrupt_plan_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_disrupt_plan_display }}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_perm_loss_help_text }}</div>
+        <div class="w3-col m6 l6 w3-padding">{{ ictriskassessment.get_dhb_perm_loss_display }}</div>
+      </div>
+
+   <br/> 
+    
+    <a class="w3-button w3-section w3-red w3-large w3-ripple" href="{% url 'assess:application-detail' ictriskassessment.app %}">{% trans "Cancel" %}</a>
+    <a class="w3-button w3-section w3-blue w3-large w3-ripple" href="{% url 'assessment:ictriskassessment-update' ictriskassessment.app %}">{% trans "Edit" %}</a>
+    <a class="w3-button w3-section w3-orange w3-large w3-ripple" href="{% url 'assessment:ictriskassessment-delete' ictriskassessment.app %}">{% trans "Delete" %}</a>
+  </div>
+</div>
+{% endblock %}

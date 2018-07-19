@@ -1,0 +1,41 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "ICT Vendor Assessment Form" %}{% endblock %}
+
+{% block content %}<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    {% if ictvendorassessment %}
+      <h1 class="w3-margin">Edit ICT vendor assessment</h1>
+    {% else %}
+      <h1 class="w3-margin">New ICT vendor assessment</h1>
+    {% endif %}
+  </header>
+  <br>
+<form class="w3-container w3-card-4" action="" method="post">
+   {% csrf_token %}
+      <div class="w3-row">
+        <div class="w3-col m6 l6"><h4><strong>Description</strong></h4></div>
+        <div class="w3-col m6 l6"><h4><strong>Your answer</strong></h4></div>
+        </div>
+      {% for field in form %}
+          {% if field == form.app %}
+            <span hidden>{{ field }}</span>
+          {% else %}
+          <div class="w3-row w3-padding w3-border">
+            <div class="w3-col m6 l6 w3-padding">{{field.help_text}}</div>
+            <div class="w3-col m6 l6 w3-padding">{{field}}</div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      <br/>
+    <a class="w3-button w3-section w3-red w3-large w3-ripple" href="{% url 'assess:application-detail' view.kwargs.pk %}">{% trans "Cancel" %}</a>
+    <button class="primaryAction w3-button w3-section w3-blue w3-large w3-ripple" type="submit">{% trans "Save" %}</button>
+</form>
+</div>
+
+{% endblock %}

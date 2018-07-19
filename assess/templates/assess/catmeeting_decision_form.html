@@ -1,0 +1,29 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+{% load assess_tags %}
+
+{% block head_title %}{% trans "CAT Meeting Decision Form" %}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">CAT Meeting Decision Form</h1>
+  </header>
+  <br>
+  <p>ID:{{ catmeeting.id }}</p>
+<p>Date:{{ catmeeting.meeting_date }}</p>
+
+{% for attendees in catmeeting.attendees.all %}
+  {{ attendees }}{% if forloop.last %}.{% else %},{% endif %}
+{% endfor %}
+
+{% for application in app_list %}
+{{ name }} {{ purpose }} 
+{% endfor %}
+
+</div>
+{% endblock %}

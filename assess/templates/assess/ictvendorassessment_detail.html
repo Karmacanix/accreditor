@@ -1,0 +1,124 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "ICT Vendor Assessment" %}{% endblock %}
+
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">ICT Vendor Assessment</h1>
+  </header>
+  <br>
+  <div class="w3-container w3-card-4">
+    <span hidden>{{ ictvendorassessment.app }}</span>
+  <div class="w3-row w3-padding">
+      <div class="w3-col m8 l8"><h4><strong>Description</strong></h4></div>
+      <div class="w3-col m4 l4"><h4><strong>Your answer</strong></h4></div>
+    </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_host_country_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.host_country}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_host_service_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.host_service}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">3. The service requires the customer to do the following work</div>
+        <div class="w3-col m4 l4 w3-padding"><ul class='w3-ul' style="list-style-type: disc;">{% for host_deploy in ictvendorassessment.host_deploy.all %}
+            <li>{{ host_deploy.name }}</li>{% endfor %}</ul></div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">4. Users access the service using the following technology</div>
+        <div class="w3-col m4 l4 w3-padding"><ul class='w3-ul' style="list-style-type: disc;">{% for devices in ictvendorassessment.devices.all %}
+            <li>{{ devices.name }}</li>{% endfor %}</ul></div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_encrypt_transmit_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_encrypt_transmit_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_encrypt_stored_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_encrypt_stored_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_anonimised_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_anonimised_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_back_up_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_back_up_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_extract_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_extract_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_restore_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_restore_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_log_admin_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_log_admin_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_log_access_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_log_access_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_shares_data_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_shares_data_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_notify_breach_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_notify_breach_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_patches_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_patches_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_testing_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_testing_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_advise_legal_issues_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_advise_legal_issues_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_ownership_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_ownership_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_penalty_breach_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_penalty_breach_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_penalty_outage_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_penalty_outage_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_report_outages_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_report_outages_display}}</div>
+      </div>
+      <div class="w3-row w3-padding w3-border">
+        <div class="w3-col m8 l8 w3-padding">{{ictvendorassessment.get_backgroud_checks_help_text}}</div>
+        <div class="w3-col m4 l4 w3-padding">{{ictvendorassessment.get_backgroud_checks_display}}</div>
+      </div>
+     <!--# app, host_country,host_service, host_deploy, devices, encrypt_transmit, encrypt_stored, anonimised, back_up, extract, restore, 
+    # log_admin, log_access, shares_data, notify_breach, patches, testing, advise_legal_issues, ownership, penalty_breach, penalty_outage,
+    #  report_outages, backgroud_checks -->     
+    </tbody>
+  </table><br/> 
+    
+    <a class="w3-button w3-section w3-red w3-large w3-ripple" href="{% url 'assess:application-detail' ictvendorassessment.app %}">{% trans "Cancel" %}</a>
+    <a class="w3-button w3-section w3-blue w3-large w3-ripple" href="{% url 'assessment:ictvendorassessment-update' ictvendorassessment.app %}">{% trans "Edit" %}</a>
+    <a class="w3-button w3-section w3-orange w3-large w3-ripple" href="{% url 'assessment:ictvendorassessment-delete' ictvendorassessment.app %}">{% trans "Delete" %}</a>
+  </div>
+</div>
+{% endblock %}

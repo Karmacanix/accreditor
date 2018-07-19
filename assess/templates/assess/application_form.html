@@ -1,0 +1,41 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Application Form" %}{% endblock %}
+
+{% block extra_head %}{{ form.media.css }}{% endblock %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">Register your Application</h1>
+  </header>
+  <br>
+  <div class="w3-row">
+    <form class="w3-container w3-card-4" action="" method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="w3-row w3-padding">
+          <div class="w3-col m3 l3">{{ field.label }}</div>
+          <div class="w3-col m3 l3">{{ field }}</div>
+        </div>
+      {% endfor %}
+      <div class="w3-row">
+        {% if application %}
+          <a class="w3-button w3-section w3-red w3-ripple w3-large" href="{% url 'assess:application-detail' application.name %}">{% trans "Cancel" %}</a>
+        {% else %}
+          <a class="w3-button w3-section w3-red w3-ripple w3-large" href="{% url 'assess:application-list' %}">{% trans "Cancel" %}</a>
+        {% endif %}
+        <button class="primaryAction w3-button w3-section w3-green w3-ripple w3-large" type="submit">{% trans "Save" %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+  {{ form.media.js }}
+{% endblock %}

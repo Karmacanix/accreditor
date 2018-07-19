@@ -1,0 +1,31 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Help" %}{% endblock %}
+
+{% block content %}
+
+  <!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">Help</h1>
+  </header>
+  <br>
+    <div class="w3-row w3-card-4">
+    <form class="w3-container" action="" method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="w3-row w3-padding">
+        <div class="w3-col m3 l3">{{ field.label }}</div>
+        <div class="w3-col m3 l3">{{ field }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <a class="w3-button w3-section w3-red w3-ripple w3-large" href="{% url 'assess:application-list' %}">{% trans "Cancel" %}</a>
+    <button class="primaryAction w3-button w3-section w3-green w3-ripple w3-large" type="submit">{% trans "Send Message" %}</button>
+    </form>
+  </div>
+{% endblock %}

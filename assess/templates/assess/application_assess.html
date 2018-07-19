@@ -1,0 +1,49 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+{% load assess_tags %}
+
+{% block head_title %}{% trans "Assess Risk" %}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">Assess Risk</h1>
+  </header>
+  <br>
+  <div class="w3-container w3-card-4">
+    <ul class="w3-ul">
+        <li><strong><small>Application:</small></strong><a href="{% url 'assess:application-detail' application.name %}">{{ application.name }}</a></li>
+        <li><strong><small>Purpose:</small></strong> {{ application.purpose }}</li>
+        <li><strong><small>Suitable for:</small></strong>
+          {% for application_type in application.application_type.all %}
+            {% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
+          {% endfor %}
+        </li>
+      </ul>
+    </div>
+    <br>
+
+{% if application.assess_status == "A" %}
+{% if request.user|has_group:"security" or request.user|has_group:"privacy" or request.user|has_group:"clinical" %}
+<h3>Risk Rating</h3>
+    <div class="w3-row w3-card-4">
+      <form action="" method="POST">
+        {% csrf_token %}
+        {% for field in form %}
+      <div class="w3-row w3-padding">
+          <div class="w3-col m3 l3">{{ field.label }}</div>
+          <div class="w3-col m3 l3">{{ field }}</div>  
+      </div>{% endfor %}
+    </div>
+      <a class="w3-button w3-section w3-large w3-red w3-ripple" href="{% url 'assess:application-assess-list' %}">{% trans "Cancel" %}</a>
+      <input class="w3-button w3-section w3-green w3-ripple w3-large" type="submit" value="Save" />
+      </form>
+{% endif %}
+{% endif %}
+</div>
+
+{% endblock %}

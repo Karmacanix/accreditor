@@ -1,0 +1,79 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+{% load assess_tags %}
+
+{% block head_title %}{% trans "Application List" %}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">Accredited Applications</h1>
+  </header>
+    {% if application_list %}
+    <!-- accepted applications -->
+    {% if accepted_list %}
+    <br>
+    <h3>Whitelist</h3>
+    <table class="w3-table-all w3-hoverable w3-card-4">
+      <thead>
+        <tr class="w3-light-grey">
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Purpose" %}</th>
+          <th>{% trans "Type" %}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for application in accepted_list %}
+        <tr>
+          <td>{% if application.requestor == request.user or application.business_owner == request.user %}<a class="w3-text-indigo"  href="{% url 'assess:application-detail' application.name %}">{{ application.name }}</a>{% else %}{{ application.name }}{% endif %}</td>
+          <td>{{ application.purpose }}</td>
+          <td>{{ request.user }}{{ application.requestor }}</td>
+          <td>{% for application_type in application.application_type.all %}
+            {% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
+          {% endfor %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    <!-- rejected applications -->
+    {% if rejected_list %}
+    <br>
+    <h3>Blacklist</h3>
+    <table class="w3-table-all w3-hoverable w3-card-4">
+      <thead>
+        <tr class="w3-light-grey">
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Purpose" %}</th>
+          <th>{% trans "Type" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for application in rejected_list %}
+        <tr>
+          <td>{% if application.requestor == request.user or application.business_owner == request.user %}<a class="w3-text-indigo" href="{% url 'assess:application-detail' application.name %}">{{ application.name }}</a>{% else %}{{ application.name }}{% endif %}</td>
+          <td>{{ application.purpose }}</td>
+          <td>{{ request.user }}{{ application.requestor }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    
+    {% else %}
+      <h3 class="w3-center">No applications available.</h3>
+    {% endif %}
+    {% if request.user.is_anonymous %}
+    <p class="w3-left"><a class="w3-button w3-green w3-padding-large w3-large w3-margin-top" href="{% url 'account_login' %}">LOGIN</a></p>
+    {% endif %}
+    {% if request.user.is_authenticated %}
+    <p class="w3-left"><a class="w3-button w3-red w3-padding-large w3-large w3-margin-top" href="{% url 'assess:application-create' %}">ASSESS APPLICATION</a></p>
+    {% endif %}
+    <br>
+  </div>
+{% endblock %}

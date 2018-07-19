@@ -1,0 +1,40 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Privacy Assessment Form" %}{% endblock %}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+	{% if privacyassessment %}
+<header class="w3-container">
+  <h1>{% trans "Edit privacy assessment" %}</h1>
+</header>
+{% else %}
+<header class="w3-container">
+  <h1>{% trans "New privacy assessment" %}</h1>
+</header>
+{% endif %}
+<form class="w3-container w3-card-4" action="" method="post">
+   {% csrf_token %}
+      {% for field in form %}
+          {% if field == form.app %}
+            <span hidden>{{ field }}</span>
+          {% else %}
+          <div class="w3-row w3-padding w3-border">
+            <div class="w3-col m4 l4 w3-padding">{{field.label}}</div>
+            <div class="w3-col m4 l4 w3-padding">{{field.help_text}}</div>
+            <div class="w3-col m4 l4 w3-padding">{{field}}</div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      <br/>
+    <a class="w3-button w3-section w3-red w3-large w3-ripple" href="{% url 'assess:application-detail' view.kwargs.pk %}">{% trans "Cancel" %}</a>
+    <button class="primaryAction w3-button w3-section w3-blue w3-large w3-ripple" type="submit">{% trans "Save" %}</button>
+</form>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,109 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+{% load assess_tags %}
+
+{% block head_title %}{% trans "Application" %}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">Application</h1>
+  </header>
+  <br>
+  <h3>Details</h3>
+  <div class="w3-container w3-card-4">
+    <ul class="w3-ul">
+        <li><strong><small>Application:</small></strong> {{ application.name }}</li>
+        <li><strong><small>Purpose:</small></strong> {{ application.purpose }}</li>
+        <li><strong><small>Suitable for:</small></strong>
+          {% for application_type in application.application_type.all %}
+            {% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
+          {% endfor %}
+        </li>
+        <li><strong><small>Requestor:</small></strong>{% if application.requestor.first_name and application.requestor.last_name %} {{ application.requestor.first_name }} {{ application.requestor.last_name }}{% else %} {{ application.requester.username }}{% endif%}</li>
+        <li><strong><small>Owner:</small></strong> {{ application.business_owner.first_name }} {{ application.business_owner.last_name }}</li>
+        <li><strong><small>DHBs:</small></strong>{% for dhb in application.dhbs.all %}
+            {{ dhb.name }}{% if forloop.last %}.{% else %},{% endif %}
+          {% endfor %}</li>
+        <li><strong><small>Website:</small></strong><a class="w3-text-indigo" href='{{ application.website }}'> {{ application.website }}</a></li>
+        <li><strong><small>Cost & Renewal:</small></strong> ${{ application.cost }} {{ application.get_cost_type_display }}</li>
+      
+    </ul>
+   </div>
+<br>
+<h3>Assessments</h3>
+  <div class="w3-container w3-card-4">
+    <p><small><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span> completed <span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span> in progress</small></p>
+    <div class="w3-row">
+      <ul class="w3-ul">
+        {% if ic %}  
+          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:informationclassification-detail' application.name %}">{% trans "View Information Classification" %}</a></li>
+        {% else %}
+          <li><span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span><a href="{% url 'assess:informationclassification-create' application.name %}">{% trans "Start Information Classification" %}</a></li>
+        {% endif %}
+        {% if cl %}  
+          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:cloudquestionnaire-detail' application.name %}">{% trans "View Cloud Questionnaire" %}</a></li>
+        {% else %}
+          <li><span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span><a href="{% url 'assess:cloudquestionnaire-create' application.name %}">{% trans "Start Cloud Questionnaire" %}</a></li>
+        {% endif %}
+        {% if bc %}  
+          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:ictriskassessment-detail' application.name %}">{% trans "View ICT Risk Assessment" %}</a></li>
+        {% else %}
+          <li><span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span><a href="{% url 'assess:ictriskassessment-create' application.name %}">{% trans "Start ICT Risk Assessment" %}</a></li>
+        {% endif %}
+        {% if va %}  
+          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:ictvendorassessment-detail' application.name %}">{% trans "View ICT Vendor Assessment" %}</a></li>
+        {% else %}
+          <li><span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span><a href="{% url 'assess:ictvendorassessment-create' application.name %}">{% trans "Start ICT Vendor Assessment" %}</a></li>
+        {% endif %}
+        {% if pa %}  
+          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:privacyassessment-detail' application.name %}">{% trans "View Privacy Assessment" %}</a></li>
+        {% else %}
+          <li><span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span><a href="{% url 'assess:privacyassessment-create' application.name %}">{% trans "Start Privacy Assessment" %}</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+<br>
+
+{% if application.assess_status == 'R' or application.assess_status == 'P' %}
+<h3>Decisions</h3>
+<div class="w3-row">
+  Security Decision{{ application.security_decision }}
+  Security Comments{{ application.security_comments }}
+  Privacy Decision{{ application.privacy_decision }}
+  Privacy Comments{{ application.privacy_comments }}
+  Business Owner Decision {{application.clinical_advisor_decision}}
+</div>
+<div class="w3-row">
+    <a class="w3-button w3-section w3-large w3-red w3-ripple" href="{% url 'assess:application-list' %}">{% trans "Back to list" %}</a>
+  </div>
+{% endif %}
+
+<div class="w3-row">
+  <a class="w3-button w3-section w3-large w3-red w3-ripple" href="{% url 'assess:application-list' %}">{% trans "Back to list" %}</a>
+  {% if application.assess_status == "N" %}
+    <a class="w3-button w3-section w3-large w3-green w3-ripple" href="{% url 'assess:application-update' application.name %}">{% trans "Edit" %}</a>
+    <a class="w3-button w3-section w3-large w3-orange w3-ripple " href="{% url 'assess:application-delete' application.name %}">{% trans "Delete" %}</a>
+    <a class="w3-button w3-section w3-large w3-blue w3-ripple " href="{% url 'assess:application-submit' application.name %}">{% trans "Submit Request" %}</a>
+  {% endif %}
+  {% if application.assess_status == "A" %}
+    {% if request.user|has_group:"security" %}  
+      <a class="w3-button w3-section w3-large w3-blue w3-ripple" href="{% url 'assess:application-security-assess' application.name %}">Assess Security Risk</a>
+    {% endif %}
+    {% if request.user|has_group:"privacy" %}
+      <a class="w3-button w3-section w3-large w3-blue w3-ripple" href="{% url 'assess:application-privacy-assess' application.name %}">Assess Privacy Risk</a>
+    {% endif %}
+    {% if request.user|has_group:"clinical" %}
+      <a class="w3-button w3-section w3-large w3-blue w3-ripple" href="{% url 'assess:application-clinical-assess' application.name %}">Assess Clinical Risk</a>
+    {% endif %}
+  {% endif %}
+</div>
+
+</div>
+
+{% endblock %}

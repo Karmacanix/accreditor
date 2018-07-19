@@ -1,0 +1,30 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Privacy Assessment" %}{% endblock %}
+{# requestor, business_owner, name, website, purpose, cost, cost_type #}
+
+{% block content %}
+<div class="w3-container w3-margin-top">
+  <header class="w3-container">
+    <h1>{% trans "Privacy Assessment" %}</h1>
+  </header>
+  <div class="w3-container w3-card-4">
+    <div class="w3-row">
+      <div class="w3-col m4 l3">
+        <p><strong>Application Name:</strong></p>
+      </div>
+      <div class="w3-col m8 l9">  
+        <p>{{ privacyassessment.app }}</p>
+      </div>
+    </div>
+    
+    <a class="w3-button w3-section w3-red w3-ripple" href="{% url 'assess:application-detail' privacyassessment.app %}">{% trans "Cancel" %}</a>
+    <a class="w3-button w3-section w3-blue w3-ripple" href="{% url 'assess:privacyassessment-update' privacyassessment.app %}">{% trans "Edit" %}</a>
+    <a class="w3-button w3-section w3-orange w3-ripple" href="{% url 'assess:privacyassessment-delete' privacyassessment.app %}">{% trans "Delete" %}</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Accreditation Guide" %}{% endblock %}
+
+{% block content %}
+
+  <!-- Header -->
+  <div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">Guides</h1>
+  </header>
+  <br>
+<table class="w3-table-all w3-hoverable w3-card-4">
+      <thead>
+        <tr class="w3-light-grey">
+          <th>{% trans "Number" %}</th>
+          <th>{% trans "Description" %}</th>
+          <th>{% trans "Document link" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+     <tr>
+    <td>1</td>
+    <td>ICT Cloud Framework Overview Presentation</td>
+    <td><a href="{% static '3DHB ICT Cloud Framework v2.pptx' %}" download>3DHB ICT Cloud Framework v2.pptx</a></td>
+  </tr>
+  <tr>
+  <td>2</td>
+  <td>Guide to anonymise your data</td>
+  <td><a href="{% static '3DHB ICT Data De Identification Guide.docx' %}" download>3DHB ICT Data De Identification Guide.docx</a></td>
+  </tr>
+  <tr>
+  <td>3</td>
+  <td>Guide to classifying your information</td>
+  <td><a href="{% static '3DHB ICT Information Classification Guide v3.docx' %}" download>3DHB ICT Information Classification Guide v3.docx</a></td>
+  </tr>
+  <tr>
+    <td>4</td>
+  <td>High Level Overview</td>
+  <td><a href="{% static '3DHB ICTCloud Framework.docx' %}" download>3DHB ICTCloud Framework.docx</a></td>
+  </tr>
+  <tr>
+    <td>5</td>
+  <td>Endorsement Letter Sent to DIA</td>
+  <td><a href="{% static '3DHB_CT_Cloud_Endorsement_No_Risk_v2.docx' %}" download>3DHB_CT_Cloud_Endorsement_No_Risk_v2.docx</a></td>
+  </tr>
+  <tr>
+    <td>6</td>
+  <td>Risk Assessment from ICT</td>
+  <td><a href="{% static '3DHB_ICT_Brief_Cloud_Security Assessment v3.docx' %}" download>3DHB_ICT_Brief_Cloud_Security Assessment v3.docx</a></td>
+  </tr>
+  <tr>
+    <td>7</td>
+  <td>Guide to completing the cloud questionnaire</td>
+  <td><a href="{% static '3DHB_ICT_Cloud_Questionnaire v2.docx' %}" download>3DHB_ICT_Cloud_Questionnaire v2.docx</a></td>
+  </tr>
+  <tr>
+    <td>8</td>
+  <td>High Level Business Process</td>
+  <td><a href="{% static 'Cloud Framework Swim Lane v2.png' %}" download>Cloud Framework Swim Lane v2.png</a></td>
+  </tr>
+  <tr>
+    <td>9</td>
+  <td>Guide for selecting cloud applications</td>
+  <td><a href="{% static 'Cloud Guidelines ICT.docx' %}" download>Cloud Guidelines ICT.docx</a></td>
+  </tr>
+  <tr>
+    <td>10</td>
+  <td>Privacy Assessment</td>
+  <td><a href="{% static 'Brief Privacy Analysis template.docx' %}" download>Brief Privacy Analysis template.docx</a></td>
+</tr> </tbody>
+    </table>
+</div>
+{% endblock %}

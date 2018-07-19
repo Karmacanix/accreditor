@@ -1,0 +1,52 @@
+{% extends "site-base.html" %}
+
+{% load static %}
+{% load account %}
+{% load i18n %}
+{% load assess_tags %}
+
+{% block head_title %}{% trans "Cloud Assessment Team Meetings" %}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="w3-container w3-margin-top">
+  <header class="w3-black w3-opacity w3-padding-16">
+    <h1 class="w3-margin">Cloud Assessment Team (CAT) Meetings</h1>
+  </header>
+  <br>
+  <p>The cloud assessment team regularly meets to discuss the applications they have recently assessed. The purpose is to determine as a group whether an application is suitable for use within Health. The process to create a CAT meeting is to first create the meeting, then add the applications for discussion (the agenda) and lastly decide whether to whiltelist or blacklist applications. It is also possible to escalate to the IPSG.
+<!-- Applications ready for the CAT meeting -->
+{% if request.user|has_group:"cloud_assessment_team" %}
+{% if catmeeting_list %}
+<h3>CAT Meetings</h3>
+<table class="w3-table-all w3-hoverable w3-padding w3-card-4">
+<thead>
+  <tr class="w3-light-grey">
+    <th>ID</th>
+    <th>Date</th>
+    <th>Attendees</th>
+  </tr>
+</thead>
+<tbody>
+{% for meeting in catmeeting_list %}
+<tr>
+  <td><a href="{% url 'assess:catmeeting-decision-update' meeting.id %}">{{ meeting.id }}</a></td>
+  <td>{{ meeting.meeting_date }}</td>
+  <td>{% for attendees in meeting.attendees.all %}
+            {{ attendees }}{% if forloop.last %}.{% else %},{% endif %}
+          {% endfor %}</td>
+</tr>
+{% endfor %}
+  </tbody>
+</table>
+<br>
+{% else %}
+<p>No CAT meetings to date. Please create one.</p>
+<br>
+{% endif %}
+
+<a class="w3-button w3-green w3-padding-large w3-large" href="{% url 'assess:catmeeting-create' %}">Create CAT meeting</a>
+{% endif %}
+
+</div>
+{% endblock %}
