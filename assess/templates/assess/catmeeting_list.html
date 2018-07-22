@@ -30,7 +30,7 @@
 <tbody>
 {% for meeting in catmeeting_list %}
 <tr>
-  <td><a href="{% url 'assess:catmeeting-decision-update' meeting.id %}">{{ meeting.id }}</a></td>
+  <td><a href="{% url 'assess:catmeeting-detail' meeting.id %}">{{ meeting.id }}</a></td>
   <td>{{ meeting.meeting_date }}</td>
   <td>{% for attendees in meeting.attendees.all %}
             {{ attendees }}{% if forloop.last %}.{% else %},{% endif %}

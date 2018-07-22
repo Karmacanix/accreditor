@@ -49,6 +49,38 @@
       </tbody>
     </table>
     {% endif %}
+    {% if owner_list %}
+    <br>
+    <h3>Business owner approval</h3>
+    <table class="w3-table-all w3-hoverable w3-card-4">
+      <thead>
+        <tr class="w3-light-grey">
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Purpose" %}</th>
+          <th>{% trans "Requestor" %}</th>
+          <th>{% trans "Business Owner" %}</th>
+          <th>{% trans "DHBs" %}</th>
+          <th>{% trans "Type(s)" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for application in owner_list %}
+        <tr>
+          <td><a class="w3-text-indigo" href="{% url 'assess:application-detail' application.name %}">{{ application.name }}</a></td>
+          <td>{{ application.purpose }}</td>
+          <td>{{ application.requestor }}</td>
+          <td>{{ application.business_owner }}</td>
+          <td>{% for dhb in application.dhbs.all %}
+            {{ dhb.name }}{% if forloop.last %}.{% else %},{% endif %}
+          {% endfor %}</td>
+          <td>{% for application_type in application.application_type.all %}
+            {% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
+          {% endfor %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
     {% if assessing_list %}
     <br>
     <h3>In Progress</h3>
@@ -84,8 +116,8 @@
           <td class="{% if application.security_decision == 'N' %} w3-green{% elif application.security_decision == 'H' %} w3-red{% elif application.security_decision == 'E' %} w3-purple{% elif application.security_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_security_decision_display }}</td>
           <td class="{% if application.privacy_decision == 'N' %} w3-green{% elif application.privacy_decision == 'H' %} w3-red{% elif application.privacy_decision == 'E' %} w3-purple{% elif application.privacy_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_privacy_decision_display }}</td>
            <td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_clinical_decision_display }}</td>
-           <td>No CAT decision.</td>
-           <td>No SPSG decision.</td>
+           {% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% else %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% endif %}
+          {% if application.escalate_IPSG %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% else %}<td class="w3-grey">N/A</td>{% endif %}
          </tr>
         {% endfor %}
       </tbody>
@@ -125,9 +157,9 @@
           {% endfor %}</td>
           <td class="{% if application.security_decision == 'N' %} w3-green{% elif application.security_decision == 'H' %} w3-red{% elif application.security_decision == 'E' %} w3-purple{% elif application.security_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_security_decision_display }}</td>
           <td class="{% if application.privacy_decision == 'N' %} w3-green{% elif application.privacy_decision == 'H' %} w3-red{% elif application.privacy_decision == 'E' %} w3-purple{% elif application.privacy_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_privacy_decision_display }}</td>
-           <td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_clinical_decision_display }}</td>
-           <td>No CAT decision.</td>
-           <td>No SPSG decision.</td>
+          <td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_clinical_decision_display }}</td>
+          {% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% else %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% endif %}
+          {% if application.escalate_IPSG %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% else %}<td class="w3-grey">N/A</td>{% endif %}
          </tr>
         {% endfor %}
       </tbody>
@@ -168,8 +200,8 @@
           <td class="{% if application.security_decision == 'N' %} w3-green{% elif application.security_decision == 'H' %} w3-red{% elif application.security_decision == 'E' %} w3-purple{% elif application.security_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_security_decision_display }}</td>
           <td class="{% if application.privacy_decision == 'N' %} w3-green{% elif application.privacy_decision == 'H' %} w3-red{% elif application.privacy_decision == 'E' %} w3-purple{% elif application.privacy_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_privacy_decision_display }}</td>
            <td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_clinical_decision_display }}</td>
-           <td>No CAT decision.</td>
-           <td>No SPSG decision.</td>
+           {% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% else %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% endif %}
+           {% if application.escalate_IPSG %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% else %}<td class="w3-grey">N/A</td>{% endif %}
          </tr>
         {% endfor %}
       </tbody>

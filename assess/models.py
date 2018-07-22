@@ -47,7 +47,6 @@ class Application(models.Model):
 		('A', 'Assessing'),
 		('R', 'Rejected'),
 		('P', 'Approved'),
-		('E', 'Escalated to IPSG'),
 	)
 	assess_status = models.CharField(
 		max_length=1,
@@ -84,6 +83,7 @@ class Application(models.Model):
 	)
 	clinical_comments = models.CharField(max_length=254, null=True, blank=True)
 	CATmeeting = models.ForeignKey('CATmeeting', on_delete=models.SET_NULL, null=True, blank=True)
+	escalate_IPSG = models.BooleanField(default=False)
 	business_owner_approval = models.BooleanField(default=False)
 	business_owner_date = models.DateField(verbose_name='Submit Date', null=True, blank=True)
 	attachments =  models.FileField(null=True, blank=True)

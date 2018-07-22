@@ -11,7 +11,7 @@
 <!-- Header -->
 <div class="w3-container w3-margin-top">
   <header class="w3-black w3-opacity w3-padding-16">
-    <h1 class="w3-margin">Application</h1>
+    <h1 class="w3-margin">Application - {{ application.get_assess_status_display }}</h1>
   </header>
   <br>
   <h3>Details</h3>
@@ -24,8 +24,8 @@
             {% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
           {% endfor %}
         </li>
-        <li><strong><small>Requestor:</small></strong>{% if application.requestor.first_name and application.requestor.last_name %} {{ application.requestor.first_name }} {{ application.requestor.last_name }}{% else %} {{ application.requester.username }}{% endif%}</li>
-        <li><strong><small>Owner:</small></strong> {{ application.business_owner.first_name }} {{ application.business_owner.last_name }}</li>
+        <li><strong><small>Requestor:</small></strong>{% if application.requestor.first_name and application.requestor.last_name %} {{ application.requestor.first_name }} {{ application.requestor.last_name }}{% else %} {{ application.requestor.username }}{% endif%}</li>
+        <li><strong><small>Owner:</small></strong>{% if application.business_owner.first_name and application.business_owner.last_name %} {{ application.business_owner.first_name }} {{ application.business_owner.last_name }}{% else %} {{ application.business_owner.username }}{% endif%}</li>
         <li><strong><small>DHBs:</small></strong>{% for dhb in application.dhbs.all %}
             {{ dhb.name }}{% if forloop.last %}.{% else %},{% endif %}
           {% endfor %}</li>
@@ -70,26 +70,15 @@
   </div>
 <br>
 
-{% if application.assess_status == 'R' or application.assess_status == 'P' %}
-<h3>Decisions</h3>
-<div class="w3-row">
-  Security Decision{{ application.security_decision }}
-  Security Comments{{ application.security_comments }}
-  Privacy Decision{{ application.privacy_decision }}
-  Privacy Comments{{ application.privacy_comments }}
-  Business Owner Decision {{application.clinical_advisor_decision}}
-</div>
-<div class="w3-row">
-    <a class="w3-button w3-section w3-large w3-red w3-ripple" href="{% url 'assess:application-list' %}">{% trans "Back to list" %}</a>
-  </div>
-{% endif %}
-
 <div class="w3-row">
   <a class="w3-button w3-section w3-large w3-red w3-ripple" href="{% url 'assess:application-list' %}">{% trans "Back to list" %}</a>
   {% if application.assess_status == "N" %}
     <a class="w3-button w3-section w3-large w3-green w3-ripple" href="{% url 'assess:application-update' application.name %}">{% trans "Edit" %}</a>
     <a class="w3-button w3-section w3-large w3-orange w3-ripple " href="{% url 'assess:application-delete' application.name %}">{% trans "Delete" %}</a>
     <a class="w3-button w3-section w3-large w3-blue w3-ripple " href="{% url 'assess:application-submit' application.name %}">{% trans "Submit Request" %}</a>
+  {% endif %}
+  {% if application.assess_status == "S" %}
+    <a class="w3-button w3-section w3-large w3-blue w3-ripple " href="{% url 'assess:application-owner-approve' application.name %}">{% trans "Approve Application Request" %}</a>
   {% endif %}
   {% if application.assess_status == "A" %}
     {% if request.user|has_group:"security" %}  

@@ -24,7 +24,7 @@
           <th>{% trans "Name" %}</th>
           <th>{% trans "Purpose" %}</th>
           <th>{% trans "Type" %}</th>
-          <th></th>
+          <th>{% trans "DHBs" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -32,9 +32,11 @@
         <tr>
           <td>{% if application.requestor == request.user or application.business_owner == request.user %}<a class="w3-text-indigo"  href="{% url 'assess:application-detail' application.name %}">{{ application.name }}</a>{% else %}{{ application.name }}{% endif %}</td>
           <td>{{ application.purpose }}</td>
-          <td>{{ request.user }}{{ application.requestor }}</td>
           <td>{% for application_type in application.application_type.all %}
             {% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
+          {% endfor %}</td>
+          <td>{% for dhb in application.dhbs.all %}
+            {{ dhb.name }}{% if forloop.last %}.{% else %},{% endif %}
           {% endfor %}</td>
         </tr>
         {% endfor %}
@@ -51,14 +53,20 @@
           <th>{% trans "Name" %}</th>
           <th>{% trans "Purpose" %}</th>
           <th>{% trans "Type" %}</th>
+          <th>{% trans "DHBs" %}</th>
         </tr>
       </thead>
       <tbody>
         {% for application in rejected_list %}
         <tr>
-          <td>{% if application.requestor == request.user or application.business_owner == request.user %}<a class="w3-text-indigo" href="{% url 'assess:application-detail' application.name %}">{{ application.name }}</a>{% else %}{{ application.name }}{% endif %}</td>
+          <td>{% if application.requestor == request.user or application.business_owner == request.user %}<a class="w3-text-indigo"  href="{% url 'assess:application-detail' application.name %}">{{ application.name }}</a>{% else %}{{ application.name }}{% endif %}</td>
           <td>{{ application.purpose }}</td>
-          <td>{{ request.user }}{{ application.requestor }}</td>
+          <td>{% for application_type in application.application_type.all %}
+            {% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
+          {% endfor %}</td>
+          <td>{% for dhb in application.dhbs.all %}
+            {{ dhb.name }}{% if forloop.last %}.{% else %},{% endif %}
+          {% endfor %}</td>
         </tr>
         {% endfor %}
       </tbody>

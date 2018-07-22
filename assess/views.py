@@ -1,8 +1,10 @@
+import datetime
 # django
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseRedirect
 from django.forms.models import model_to_dict
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, FormView
@@ -14,7 +16,7 @@ from .models import Application, InformationClassification, CloudQuestionnaire
 from .models import ICTRiskAssessment, ICTVendorAssessment, PrivacyAssessment
 from .models import CATmeeting, IPSGmeeting
 from .forms import ApplicationForm, ApplicationSubmitForm, ApplicationSecurityDecisionForm
-from .forms import ApplicationPrivacyDecisionForm, ApplicationClinicalDecisionForm
+from .forms import ApplicationPrivacyDecisionForm, ApplicationClinicalDecisionForm, ApplicationOwnerApprovalForm
 from .forms import InformationClassificationForm, CloudQuestionnaireForm, ICTRiskAssessmentForm 
 from .forms import ICTVendorAssessmentForm, PrivacyAssessmentForm, CATmeetingForm, ApplicationDecisionForm
 
@@ -53,6 +55,7 @@ class ApplicationRequestList(ListView):
         context['reject_list'] = Application.objects.filter(assess_status='R', requestor=ro) | Application.objects.filter(assess_status='R', business_owner=ro)
         context['approve_list'] = Application.objects.filter(assess_status='P', requestor=ro) | Application.objects.filter(assess_status='P', business_owner=ro)
         context['assessing_list'] = Application.objects.filter(assess_status='A', requestor=ro) | Application.objects.filter(assess_status='A', business_owner=ro)
+        context['owner_list'] = Application.objects.filter(assess_status='S', requestor=ro) | Application.objects.filter(assess_status='S', business_owner=ro)
         context['new_list'] = Application.objects.filter(assess_status='N', requestor=ro) | Application.objects.filter(assess_status='N', business_owner=ro)
         return context
 
@@ -237,7 +240,21 @@ class ApplicationSubmit(SuccessMessageMixin, UpdateView):
 
     def get_initial(self):
         initial = super(ApplicationSubmit, self).get_initial()
+        initial['assess_status'] = 'S'
+        return initial
+
+
+class ApplicationOwnerApproval(SuccessMessageMixin, UpdateView):
+    model = Application
+    form_class = ApplicationOwnerApprovalForm
+    template_name="assess/application_owner_approval.html"
+    success_message = 'Business owner approved request for assessment!'
+
+    def get_initial(self):
+        initial = super(ApplicationOwnerApproval, self).get_initial()
         initial['assess_status'] = 'A'
+        initial['business_owner_date'] = datetime.date.today()
+        initial['business_owner_approval'] = True
         return initial
 
 
@@ -255,7 +272,6 @@ class InformationClassificationCreate(SuccessMessageMixin, CreateView):
     model = InformationClassification
     form_class = InformationClassificationForm
     success_message = 'Information Classification successfully saved!'
-    #success_url = reverse_lazy('assess:application-list')
 
     def get_initial(self):
         initial = super(InformationClassificationCreate, self).get_initial()
@@ -442,6 +458,18 @@ class CatMeetingList(ListView):
 class CatMeetingDetail(DetailView):
     model = CATmeeting
 
+    def get_context_data(self, **kwargs):
+        context = super(CatMeetingDetail, self).get_context_data(**kwargs)
+        context['decision_list'] = Application.objects.filter(CATmeeting=self.kwargs['pk'])
+        context['app_list'] = Application.objects.filter(
+            assess_status='A', 
+            security_decision__isnull=False, 
+            privacy_decision__isnull=False, 
+            clinical_decision__isnull=False,
+            CATmeeting__isnull=True,
+            )
+        return context 
+
 
 class CatMeetingCreate(SuccessMessageMixin, CreateView):
     model = CATmeeting
@@ -459,27 +487,56 @@ class CatMeetingUpdate(SuccessMessageMixin, UpdateView):
 
 class CatMeetingDelete(SuccessMessageMixin, DeleteView):
     model = CATmeeting
-    success_url = reverse_lazy('assess:catmeeting-list')
     success_message = "CAT Meeting deleted!"
+    template_name="assess/catmeeting_confirm_delete.html"
 
+    def get_success_url(self):
+        return reverse('assess:catmeeting-detail', kwargs={'pk': self.kwargs['pk']})
+    
 
 class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
-    model = CATmeeting
+    model = Application
     form_class = ApplicationDecisionForm
     template_name="assess/catmeeting_decision_form.html"
     success_message = 'Application decision updated successfully!'
     success_url = reverse_lazy('assess:catmeeting-list')
 
+    def post(self, request, *args, **kwargs):
+        cat = self.kwargs['catmeeting_id']
+        app = self.kwargs['pk']
+        req = Application.objects.filter(name=app)
+        print("Cat:",cat, "App:", app, "Req:", req)
+        # get variables - app, cat meeting number and the decision
+        # save the application model with the new status and the CAT meeting
+        # email the requestor and business owner.
+        if request.method == 'POST':
+            f = ApplicationDecisionForm(request.POST)
+            d = f['cat_decision'].value()
+            if d == "E":
+                req.update(escalate_IPSG = True)
+
+            if d == "R":
+                req.update(assess_status = "R")
+
+            if d == "P":
+                req.update(assess_status = "P")
+
+            if not f['CATmeeting'].value():
+                req.update(CATmeeting = cat)
+
+        return HttpResponseRedirect(reverse('assess:catmeeting-list'))
+
+
     def get_context_data(self, **kwargs):
         context = super(CatMeetingDecisionUpdate, self).get_context_data(**kwargs)
-        a = Application.objects.filter(
-            assess_status='A', 
-            security_decision__isnull=False, 
-            privacy_decision__isnull=False, 
-            clinical_decision__isnull=False,
-            ),
-        context['app_list'] = a 
+        context['catmeeting'] = self.kwargs['catmeeting_id']
+        context['app'] = self.kwargs['pk']
         return context 
+
+    def get_queryset(self):
+        queryset = super(CatMeetingDecisionUpdate, self).get_queryset()
+        queryset = queryset.filter(name=self.kwargs['pk'])
+        return queryset
 
 
 class IPSGMeetingDetailView(DetailView):

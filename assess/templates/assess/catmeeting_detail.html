@@ -13,17 +13,96 @@
   <header class="w3-black w3-opacity w3-padding-16">
     <h1 class="w3-margin">CAT Meeting</h1>
   </header>
-  <br>
   {% if catmeeting %}
-  <h3>Details</h3>
-  <div class="w3-container w3-card-4">
-    <ul class="w3-ul">
-      <li><strong><small>Date:</small></strong> {{ catmeeting.meeting_date }}</li>
-      <li><strong><small>Attendees:</small></strong> {{ catmeeting.attendees }}</li>
-      <li><strong><small>Location:</small></strong> {{ catmeeting.meeting_location }}</li>
-      <li><strong><small>Minutes:</small></strong> {{ application.meeting_minutes }}</li>
-    </ul>
-   </div>
+  {% with catmeeting.id as catmeeting_id %}
   <br>
-{% endif %}
+  <div class="w3-container w3-card-4">
+    <div class="w3-row w3-border-bottom w3-padding-16">
+      <div class="w3-col m1 l1">Date:</div>
+      <div class="w3-col m1 l1">{{ catmeeting.meeting_date }}</div>
+    </div>
+    <div class="w3-row w3-border-bottom w3-padding-16">
+      <div class="w3-col m1 l1">Attendees:</div>
+      <div class="w3-col m1 l1">
+        {% for attendees in catmeeting.attendees.all %}{{ attendees }}{% if forloop.last %}.{% else %}, {% endif %}{% endfor %}</div>
+    </div>
+   
+      {% if decision_list %}
+      
+    <div class="w3-row w3-padding-16">
+        <h4>Agenda Items</h4>
+        <table class="w3-table-all w3-hoverable w3-card-4 w3-third">
+          <thead>
+            <tr class="w3-light-grey w3-tiny">
+              <th>{% trans "Name" %}</th>
+              <th>{% trans "Purpose" %}</th>
+              <th>{% trans "Decision" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for application in decision_list %}
+            <tr>
+              <td>{{ application.name }}</td>
+              <td>{{ application.purpose }}</td>
+              
+
+{% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% else %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% endif %}
+        
+             </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <br>
+      {% endif %}
+  </div>
+  
+  {% if app_list %}
+    <br>
+    <h3>Apps (ready to table at CAT)</h3>
+    <p>A list of apps that have completed security, privacy and clinical assessments and are now ready for a decision to be made by the CAT team. Click 'add' to add an app to the CAT meeting agenda. </p>
+    <table class="w3-table-all w3-hoverable w3-card-4">
+      <thead>
+        <tr class="w3-light-grey w3-tiny">
+          <th>{% trans "Action" %}</th>
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Purpose" %}</th>
+          <th>{% trans "Requestor" %}</th>
+          <th>{% trans "Business Owner" %}</th>
+          <th>{% trans "DHBs" %}</th>
+          <th>{% trans "Type(s)" %}</th>
+          <th>{% trans "ICT Security" %}</th>
+          <th>{% trans "Privacy Officer" %}</th>
+          <th>{% trans "Clinical Advisor" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for application in app_list %}
+        <tr>
+          <td><a class="w3-button w3-blue w3-padding-large w3-small" href="{% url 'assess:catmeeting-decision-update' pk=application.name catmeeting_id=catmeeting_id %}">Add</a></td>
+          <td>{{ application.name }}</td>
+          <td>{{ application.purpose }}</td>
+          <td>{{ application.requestor }}</td>
+          <td>{{ application.business_owner }}</td>
+          <td>{% for dhb in application.dhbs.all %}
+            {{ dhb.name }}{% if forloop.last %}.{% else %},{% endif %}
+          {% endfor %}</td>
+          <td>{% for application_type in application.application_type.all %}
+            {% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
+          {% endfor %}</td>
+          <td class="{% if application.security_decision == 'N' %} w3-green{% elif application.security_decision == 'H' %} w3-red{% elif application.security_decision == 'E' %} w3-purple{% elif application.security_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_security_decision_display }}</td>
+          <td class="{% if application.privacy_decision == 'N' %} w3-green{% elif application.privacy_decision == 'H' %} w3-red{% elif application.privacy_decision == 'E' %} w3-purple{% elif application.privacy_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_privacy_decision_display }}</td>
+          <td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_clinical_decision_display }}</td>
+         </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    {% endif %}
+    {% endwith %}
+    {% else %}
+    <p>No jimmy jims uncle pancakes</p>
+    {% endif %}
+
+</div>
 {% endblock %}

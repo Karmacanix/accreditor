@@ -37,6 +37,18 @@ class ApplicationSubmitForm(forms.ModelForm):
 		}
 
 
+class ApplicationOwnerApprovalForm(forms.ModelForm):
+	
+	class Meta:
+		model = Application
+		fields = ['business_owner_approval', 'business_owner_date', 'assess_status']
+		widgets = {			
+			'business_owner_approval': forms.CheckboxInput(attrs={'class' : 'w3-check', 'hidden' : True,}),
+			'business_owner_date': forms.DateInput(attrs={'class' : 'w3-input w3-border', 'hidden' : True,}),
+			'assess_status': forms.Select(attrs={'class' : 'w3-select w3-border', 'hidden' : True, }),
+		}
+
+
 class ApplicationSecurityDecisionForm(forms.ModelForm):
 	
 	class Meta:
@@ -60,7 +72,7 @@ class ApplicationPrivacyDecisionForm(forms.ModelForm):
 			'privacy_comments',
 		]
 		widgets = {			
-			'privacy_decision': forms.Select(attrs={'class' : 'w3-select w3-border',}),
+			'privacy_decision': forms.RadioSelect(attrs={'class' : 'w3-ul',}),
 			'privacy_comments': forms.Textarea(attrs={'class' : 'w3-input w3-border', 'cols': '40', 'rows': '3'}),
 		}
 
@@ -74,7 +86,7 @@ class ApplicationClinicalDecisionForm(forms.ModelForm):
 			'clinical_comments',
 		]
 		widgets = {			
-			'clinical_decision': forms.Select(attrs={'class' : 'w3-select w3-border',}),
+			'clinical_decision': forms.RadioSelect(attrs={'class' : 'w3-ul',}),
 			'clinical_comments': forms.Textarea(attrs={'class' : 'w3-input w3-border', 'cols': '40', 'rows': '3'}),
 		}
 
@@ -211,19 +223,19 @@ class CATmeetingForm(forms.ModelForm):
 
 
 class ApplicationDecisionForm(forms.ModelForm):
-	ASSESSMENT_STATUS = (
-		('R', 'Rejected'),
-		('P', 'Approved'),
-		('E', 'Escalated to IPSG'),
+	CAT_DECISION_CHOICES = (
+		('R', 'Reject'),
+		('P', 'Approve'),
+		('E', 'Escalate to IPSG'),
 	)
-	assess_status = forms.ChoiceField(choices=ASSESSMENT_STATUS)
+	cat_decision = forms.ChoiceField(choices=CAT_DECISION_CHOICES, label="CAT decision", widget=forms.RadioSelect(attrs={'class': 'w3-ul'}))
+
 	class Meta:
 		model = Application
 		fields = ['name', 'CATmeeting', 'assess_status']
 		widgets = {			
-			'meeting_date': forms.DateInput(attrs={'class' : 'w3-input w3-border'}),
-			'security_decision': forms.TextInput(attrs={'class' : 'w3-input w3-border', 'disabled': 'True'}),
-			'assess_status': forms.RadioSelect(attrs={'class': 'w3-ul'}),
+			'CATmeeting': forms.NumberInput(attrs={'class' : 'w3-input w3-border' }),
+			'assess_status': forms.RadioSelect(attrs={'class': 'w3-ul', }),
 		}
 
 

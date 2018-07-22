@@ -5,7 +5,7 @@
 {% load i18n %}
 {% load assess_tags %}
 
-{% block head_title %}{% trans "Application List" %}{% endblock %}
+{% block head_title %}{% trans "Assessment List" %}{% endblock %}
 
 {% block content %}
 <!-- Header -->
@@ -25,12 +25,12 @@
           <th>{% trans "Name" %}</th>
           <th>{% trans "Purpose" %}</th>
           <th>{% trans "DHB(s)" %}</th>
-          <th>{% trans "Type(s)" %}</th>
-          <th>{% trans "ICT Security" %}</th>
-          <th>{% trans "Privacy Officer" %}</th>
-          <th>{% trans "Clinical Advisor" %}</th>
-          <th><small>{% trans "Cloud Assessment Team" %}</small></th>
-          <th><small>{% trans "Information Privacy and Security Governance" %}</small></th>
+          <th>{% trans "App" %}<br>{% trans "Type(s)" %}</th>
+          <th class="w3-center">{% trans "ICT" %}<br>{% trans "Security" %}</th>
+          <th class="w3-center">{% trans "Privacy" %}<br>{% trans "Officer" %}</th>
+          <th class="w3-center">{% trans "Clinical" %}<br>{% trans "Advisor" %}</th>
+          <th class="w3-center w3-tiny">{% trans "Cloud" %}<br>{% trans "Assessment Team" %}</th>
+          <th class="w3-center w3-tiny">{% trans "Information Privacy" %} &<br>{% trans "Security Governance" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -47,8 +47,8 @@
           <td class="{% if application.security_decision == 'N' %} w3-green{% elif application.security_decision == 'H' %} w3-red{% elif application.security_decision == 'E' %} w3-purple{% elif application.security_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_security_decision_display }}</td>
           <td class="{% if application.privacy_decision == 'N' %} w3-green{% elif application.privacy_decision == 'H' %} w3-red{% elif application.privacy_decision == 'E' %} w3-purple{% elif application.privacy_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_privacy_decision_display }}</td>
            <td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_clinical_decision_display }}</td>
-           <td>No CAT decision.</td>
-           <td>No SPSG decision.</td>
+           {% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% else %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% endif %}
+           {% if application.escalate_IPSG %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% else %}<td class="w3-grey">N/A</td>{% endif %}
          </tr>
         {% endfor %}
       </tbody>
@@ -66,12 +66,12 @@
           <th>{% trans "Name" %}</th>
           <th>{% trans "Purpose" %}</th>
           <th>{% trans "DHB(s)" %}</th>
-          <th class="w3-center">{% trans "App" %}<br>{% trans "Type(s)" %}</th>
+          <th>{% trans "App" %}<br>{% trans "Type(s)" %}</th>
           <th class="w3-center">{% trans "ICT" %}<br>{% trans "Security" %}</th>
           <th class="w3-center">{% trans "Privacy" %}<br>{% trans "Officer" %}</th>
           <th class="w3-center">{% trans "Clinical" %}<br>{% trans "Advisor" %}</th>
-          <th class="w3-center">{% trans "Cloud" %}<br>{% trans "Assessment Team" %}</th>
-          <th class="w3-center">{% trans "Information Privacy" %} &<br>{% trans "Security Governance" %}</th>
+          <th class="w3-center w3-tiny">{% trans "Cloud" %}<br>{% trans "Assessment Team" %}</th>
+          <th class="w3-center w3-tiny">{% trans "Information Privacy" %} &<br>{% trans "Security Governance" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -88,8 +88,8 @@
           <td class="{% if application.security_decision == 'N' %} w3-green{% elif application.security_decision == 'H' %} w3-red{% elif application.security_decision == 'E' %} w3-purple{% elif application.security_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_security_decision_display }}</td>
           <td class="{% if application.privacy_decision == 'N' %} w3-green{% elif application.privacy_decision == 'H' %} w3-red{% elif application.privacy_decision == 'E' %} w3-purple{% elif application.privacy_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_privacy_decision_display }}</td>
            <td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_clinical_decision_display }}</td>
-           <td>No CAT decision.</td>
-           <td>No SPSG decision.</td>
+           {% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% else %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% endif %}
+           {% if application.escalate_IPSG %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% else %}<td class="w3-grey">N/A</td>{% endif %}
          </tr>
         {% endfor %}
       </tbody>
@@ -107,12 +107,12 @@
           <th>{% trans "Name" %}</th>
           <th>{% trans "Purpose" %}</th>
           <th>{% trans "DHB(s)" %}</th>
-          <th>{% trans "Type(s)" %}</th>
-          <th>{% trans "ICT Security" %}</th>
-          <th>{% trans "Privacy Officer" %}</th>
-          <th>{% trans "Clinical Advisor" %}</th>
-          <th><small>{% trans "Cloud Assessment Team" %}</small></th>
-          <th><small>{% trans "Information Privacy and Security Governance" %}</small></th>
+          <th>{% trans "App" %}<br>{% trans "Type(s)" %}</th>
+          <th class="w3-center">{% trans "ICT" %}<br>{% trans "Security" %}</th>
+          <th class="w3-center">{% trans "Privacy" %}<br>{% trans "Officer" %}</th>
+          <th class="w3-center">{% trans "Clinical" %}<br>{% trans "Advisor" %}</th>
+          <th class="w3-center w3-tiny">{% trans "Cloud" %}<br>{% trans "Assessment Team" %}</th>
+          <th class="w3-center w3-tiny">{% trans "Information Privacy" %} &<br>{% trans "Security Governance" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -129,8 +129,8 @@
           <td class="{% if application.security_decision == 'N' %} w3-green{% elif application.security_decision == 'H' %} w3-red{% elif application.security_decision == 'E' %} w3-purple{% elif application.security_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_security_decision_display }}</td>
           <td class="{% if application.privacy_decision == 'N' %} w3-green{% elif application.privacy_decision == 'H' %} w3-red{% elif application.privacy_decision == 'E' %} w3-purple{% elif application.privacy_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_privacy_decision_display }}</td>
            <td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %} w3-opacity-min">{{ application.get_clinical_decision_display }}</td>
-           <td>No CAT decision.</td>
-           <td>No SPSG decision.</td>
+           {% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% else %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% endif %}
+           {% if application.escalate_IPSG %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% else %}<td class="w3-grey">N/A</td>{% endif %}
          </tr>
         {% endfor %}
       </tbody>
