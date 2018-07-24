@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.http import HttpResponseRedirect
 from django.forms.models import model_to_dict
 from django.shortcuts import render, get_object_or_404
@@ -238,6 +239,15 @@ class ApplicationSubmit(SuccessMessageMixin, UpdateView):
     template_name="assess/application_confirm_submit.html"
     success_message = 'Application submitted successfully for assessment!'
 
+    def form_valid(self, form):
+        a = Application.objects.get(pk=self.kwargs['pk'])
+        r = User.objects.get(username=a.requestor)
+        b = User.objects.get(username=a.business_owner)
+        subject_line = "Approval Required"
+        message_body = "User: "+str(self.request.user)+" has initiated the app accredition process. You have been nominated by the requestor as the future Business Owner for "+str(a.name)+". Due to the time and resources required by this process, you will need to provide an approval to continue. Please log into the App Accreditor and decide whether to accept or decline this assessment request."
+        send_mail(subject_line, message_body, r.email, [b.email])
+        return super().form_valid(form)
+
     def get_initial(self):
         initial = super(ApplicationSubmit, self).get_initial()
         initial['assess_status'] = 'S'
@@ -250,9 +260,19 @@ class ApplicationOwnerApproval(SuccessMessageMixin, UpdateView):
     template_name="assess/application_owner_approval.html"
     success_message = 'Business owner approved request for assessment!'
 
+    def form_valid(self, form):
+        a = Application.objects.get(pk=self.kwargs['pk'])
+        b = User.objects.get(username=a.business_owner)
+        cat = list(User.objects.filter(groups__name='cloud_assessment_team').values_list('email', flat=True))
+        print(cat)
+        subject_line = "New App to Assess"
+        message_body = "Business owner: "+str(self.request.user)+" has approved an app ("+str(a.name)+") to be accredited. Please log into the App Accreditor and assess this application."
+        send_mail(subject_line, message_body, b.email, cat)
+        return super().form_valid(form)
+
     def get_initial(self):
         initial = super(ApplicationOwnerApproval, self).get_initial()
-        initial['assess_status'] = 'A'
+        initial['assess_status'] = 'S'
         initial['business_owner_date'] = datetime.date.today()
         initial['business_owner_approval'] = True
         return initial

@@ -149,5 +149,12 @@ STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'assess:application-list'
 
+ANYMAIL = {
+    "MAILGUN_API_KEY": "a4c8297ba9e8d5b02c2f229cff530574-8b7bf2f1-3e430b47",
+    "MAILGUN_SENDER_DOMAIN": 'sandbox8029a5fdef2d45a789df5dc1c3af2f14.mailgun.org',
+    }
+
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+DEFAULT_FROM_EMAIL = "cranhurst@priest.com"
 # Activate Django-Heroku.
 django_heroku.settings(locals())

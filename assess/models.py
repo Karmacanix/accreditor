@@ -95,7 +95,7 @@ class Application(models.Model):
 		return self.name
 
 	def get_absolute_url(self):
-		return reverse('assess:application-detail', kwargs={'pk': self})
+		return reverse('assess:application-detail', kwargs={'pk': self.pk})
 
 
 class InformationClassification(models.Model):
