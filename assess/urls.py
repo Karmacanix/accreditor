@@ -22,6 +22,7 @@ urlpatterns = [
     path('application/create/', views.ApplicationCreate.as_view(), name='application-create'),
     path('', views.ApplicationList.as_view(), name='application-list'),
     path('application/list/assess/', views.ApplicationAssessList.as_view(), name='application-assess-list'),
+    path('application/list/approve/', views.ApplicationApproveList.as_view(), name='application-approve-list'),
     path('application/list/request/', views.ApplicationRequestList.as_view(), name='application-request-list'),
     path('application/<str:pk>/', views.ApplicationDetail.as_view(), name='application-detail'),
     path('application/<str:pk>/security/assess/', views.ApplicationSecurityAssess.as_view(), name='application-security-assess'),

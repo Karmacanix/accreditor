@@ -32,13 +32,15 @@ fieldset.inlineLabels ul {list-style:none}
   <div class="w3-bar w3-red w3-card w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
     <a href="{% url 'assess:application-list' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Applications</a>
-    {% if request.user.is_authenticated %}
+    {% if request.user|has_group:"requestors" %}
       <a href="{% url 'assess:application-request-list' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Requests</a>
+    {% endif %}
+    {% if request.user|has_group:"owners" %}
+      <a href="{% url 'assess:application-approve-list' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Approve</a>
     {% endif %}
     {% if request.user|has_group:"security" or request.user|has_group:"privacy" or request.user|has_group:"clinical" %}
       <a href="{% url 'assess:application-assess-list' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Assess</a>
-      <a href="{% url 'assess:catmeeting-list' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">CAT</a>
-      <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">IPSG</a>
+      <a href="{% url 'assess:catmeeting-list' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Decide</a>
     {% endif %}
     <a href="{% url 'guides' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Guides</a>
     <a href="{% url 'help' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Help</a>
@@ -46,7 +48,7 @@ fieldset.inlineLabels ul {list-style:none}
       <a href="{% url 'admin:index' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Admin</a>
     {% endif %}
     {% if user.is_authenticated %}
-      <a href="{% url 'account_logout' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Logout</a>
+      <a href="{% url 'account_logout' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Logout {% user_display user %}</a>
     {% else %}
       <a href="{% url 'account_login' %}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Login</a>
     {% endif %}
@@ -55,13 +57,15 @@ fieldset.inlineLabels ul {list-style:none}
   <!-- Navbar on small screens -->
   <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
     <a href="{% url 'assess:application-list' %}" class="w3-bar-item w3-button w3-padding-large">Applications</a>
-    {% if request.user.is_authenticated %}
+    {% if request.user|has_group:"requestors" %}
       <a href="{% url 'assess:application-request-list' %}" class="w3-bar-item w3-button w3-padding-large">Requests</a>
+    {% endif %}
+    {% if request.user|has_group:"owners" %}
+      <a href="{% url 'assess:application-approve-list' %}" class="w3-bar-item w3-button w3-padding-large">Approve</a>
     {% endif %}
     {% if request.user|has_group:"security" or request.user|has_group:"privacy" or request.user|has_group:"clinical"%}
       <a href="{% url 'assess:application-assess-list' %}" class="w3-bar-item w3-button w3-padding-large">Assess</a>
-      <a href="{% url 'assess:catmeeting-list' %}" class="w3-bar-item w3-button w3-padding-large">CAT</a> 
-      <a href="#" class="w3-bar-item w3-button w3-padding-large">IPSG</a>
+      <a href="{% url 'assess:catmeeting-list' %}" class="w3-bar-item w3-button w3-padding-large">Decide</a>
     {% endif %}
     <a href="{% url 'guides' %}" class="w3-bar-item w3-button w3-padding-large">Guides</a>
     <a href="{% url 'help' %}" class="w3-bar-item w3-button w3-padding-large">Help</a>
@@ -69,7 +73,7 @@ fieldset.inlineLabels ul {list-style:none}
       <a href="{% url 'admin:index' %}" class="w3-bar-item w3-button w3-padding-large">Admin</a>
     {% endif %}
     {% if user.is_authenticated %}
-      <a href="{% url 'account_logout' %}" class="w3-bar-item w3-button w3-padding-large">Logout</a>
+      <a href="{% url 'account_logout' %}" class="w3-bar-item w3-button w3-padding-large">Logout {% user_display user %}</a>
     {% else %}
       <a href="{% url 'account_login' %}" class="w3-bar-item w3-button w3-padding-large">Login</a>
     {% endif %}

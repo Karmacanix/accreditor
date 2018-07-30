@@ -15,7 +15,7 @@
   </header>
     {% if application_list %}
     
-    {% if user.is_authenticated %}
+    {% if request.user|has_group:"requestors" %}
     {% if new_list %}
     <br>
     <h3>New</h3>
@@ -51,7 +51,7 @@
     {% endif %}
     {% if owner_list %}
     <br>
-    <h3>Business owner approval</h3>
+    <h3>Waiting Business Owner Approval</h3>
     <table class="w3-table-all w3-hoverable w3-card-4">
       <thead>
         <tr class="w3-light-grey">
@@ -125,7 +125,7 @@
     {% endif %}
     {% if reject_list %}
     <br>
-    <h3>Blacklist</h3>
+    <h3>Blacklisted</h3>
     <table class="w3-table-all w3-hoverable w3-card-4">
       <thead>
         <tr class="w3-light-grey">
@@ -167,7 +167,7 @@
     {% endif %}
     {% if approve_list %}
     <br>
-    <h3>Whitelist</h3>
+    <h3>Whitelisted</h3>
     <table class="w3-table-all w3-hoverable w3-card-4">
       <thead>
         <tr class="w3-light-grey">

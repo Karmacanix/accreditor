@@ -53,11 +53,23 @@ class ApplicationRequestList(ListView):
     def get_context_data(self, **kwargs):
         context = super(ApplicationRequestList, self).get_context_data(**kwargs)
         ro = self.request.user
-        context['reject_list'] = Application.objects.filter(assess_status='R', requestor=ro) | Application.objects.filter(assess_status='R', business_owner=ro)
-        context['approve_list'] = Application.objects.filter(assess_status='P', requestor=ro) | Application.objects.filter(assess_status='P', business_owner=ro)
-        context['assessing_list'] = Application.objects.filter(assess_status='A', requestor=ro) | Application.objects.filter(assess_status='A', business_owner=ro)
-        context['owner_list'] = Application.objects.filter(assess_status='S', requestor=ro) | Application.objects.filter(assess_status='S', business_owner=ro)
-        context['new_list'] = Application.objects.filter(assess_status='N', requestor=ro) | Application.objects.filter(assess_status='N', business_owner=ro)
+        context['reject_list'] = Application.objects.filter(assess_status='R', requestor=ro)
+        context['approve_list'] = Application.objects.filter(assess_status='P', requestor=ro)
+        context['assessing_list'] = Application.objects.filter(assess_status='A', requestor=ro)
+        context['owner_list'] = Application.objects.filter(assess_status='S', requestor=ro)
+        context['new_list'] = Application.objects.filter(assess_status='N', requestor=ro)
+        return context
+
+
+class ApplicationApproveList(ListView):
+    model = Application
+    template_name = "assess/applicationapprove_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationApproveList, self).get_context_data(**kwargs)
+        bo = self.request.user
+        context['to_approve_list'] = Application.objects.filter(assess_status='S', business_owner=bo)
+        context['approved_list'] = Application.objects.filter(assess_status__in=['A','R','P',], business_owner=bo)
         return context
 
 
@@ -220,6 +232,21 @@ class ApplicationCreate(SuccessMessageMixin, CreateView):
     form_class = ApplicationForm
     success_message = 'Application successfully registered!'
     success_url = reverse_lazy('assess:application-list')
+
+    def form_valid(self, form):
+        #add requestor to the requestors group
+        ro = form.cleaned_data['requestor']
+        if not ro.groups.filter(name='requestors').exists():
+            rg = Group.objects.get(name='requestors')
+            rg.user_set.add(ro)
+
+        #add the business owner to the business owner group
+        bo = form.cleaned_data['business_owner']
+        if not bo.groups.filter(name='owners').exists():
+            og = Group.objects.get(name='owners')
+            og.user_set.add(bo)
+
+        return super().form_valid(form)
 
     def get_initial(self):
         initial = super(ApplicationCreate, self).get_initial()
@@ -542,10 +569,29 @@ class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
                 req.update(assess_status = "P")
 
             if not f['CATmeeting'].value():
-                req.update(CATmeeting = cat)
+                req.update(CATmeeting = cat) 
 
         return HttpResponseRedirect(reverse('assess:catmeeting-list'))
 
+    def form_valid(self, form):
+        a = Application.objects.get(pk=self.kwargs['pk'])
+        b = User.objects.get(username=a.business_owner)
+        r = User.objects.get(username=a.requestor)
+        c = CATmeeting.objects.get(pk=a.catmeeting)
+        d = c.meeting_date
+        if a.assess_status == 'R':
+            s = "is not secure or private enough and has been Blacklisted from use at the DHB."
+
+        if a.assess_status == 'A':
+            s = "met 3DHB's security and privacy policy threshold for compliance. It has been Whitelisted for use at the DHB."
+
+        if a.assess_status == 'E':
+            s = "exceeded our comfort threshold for reasonable privacy and security risks.  This request has been escalated to the IPSG."
+
+        subject_line = "App Accreditor CAT Decision"
+        message_body = "To "+str(b)+", "+str(r)+".  "+"The cloud assessment team met "+str(d)+". They have decided that "+str(a.name)+" "+str(s)
+        send_mail(subject_line, message_body, "cloud_assessment_team@ccdhb.org.nz", [b, r])
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super(CatMeetingDecisionUpdate, self).get_context_data(**kwargs)
