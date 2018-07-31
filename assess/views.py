@@ -3,6 +3,7 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth.models import User, Group
 from django.contrib.messages.views import SuccessMessageMixin
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives, send_mail
 from django.http import HttpResponseRedirect
@@ -590,7 +591,7 @@ class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
 
         subject_line = "App Accreditor CAT Decision"
         message_body = "To "+str(b)+", "+str(r)+".  "+"The cloud assessment team met "+str(d)+". They have decided that "+str(a.name)+" "+str(s)
-        send_mail(subject_line, message_body, "cloud_assessment_team@ccdhb.org.nz", [b, r])
+        send_mail(subject_line, message_body, "app_accreditor@3dhb.org.nz", [b, r])
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
