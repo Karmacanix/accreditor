@@ -40,9 +40,13 @@ class ApplicationAssessList(ListView):
     def get_context_data(self, **kwargs):
         context = super(ApplicationAssessList, self).get_context_data(**kwargs)
         a = Application.objects.filter(assess_status='A')
+        h = Application.objects.filter(assess_status__in=['P','R',])
         context['security_list'] = a
+        context['security_history'] = h
         context['privacy_list'] = a
         context['clinical_list'] = a
+        context['privacy_history'] = h
+        context['clinical_history'] = h
         context['assessing_list'] = a
         return context
 
@@ -85,6 +89,13 @@ class ApplicationDetail(DetailView):
         context['clinical_form'] = ApplicationClinicalDecisionForm(instance=a)
         if hasattr(a, 'informationclassification'):
             context['ic'] = True
+            ic = InformationClassification.objects.get(app=a.pk)
+            if not ic.medical_in_confidence and not ic.commercial_in_confidence and not ic.staff_in_confidence:
+                context['unclass'] = True
+
+            if ic.special_handling_sensitive_patient or ic.special_handling_sensitive_disease or ic.special_handling_sensitive_abuse:
+                context['sph'] = True
+
         else:
             context['ic'] = False
 
@@ -269,11 +280,10 @@ class ApplicationSubmit(SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         a = Application.objects.get(pk=self.kwargs['pk'])
-        r = User.objects.get(username=a.requestor)
         b = User.objects.get(username=a.business_owner)
-        subject_line = "Approval Required"
+        subject_line = "3DHB Risk Assessment: Approval to proceed required"
         message_body = "User: "+str(self.request.user)+" has initiated the app accredition process. You have been nominated by the requestor as the future Business Owner for "+str(a.name)+". Due to the time and resources required by this process, you will need to provide an approval to continue. Please log into the App Accreditor and decide whether to accept or decline this assessment request."
-        send_mail(subject_line, message_body, r.email, [b.email])
+        send_mail(subject_line, message_body, settings.EMAIL_HOST_USER, [b.email])
         return super().form_valid(form)
 
     def get_initial(self):
@@ -290,17 +300,15 @@ class ApplicationOwnerApproval(SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         a = Application.objects.get(pk=self.kwargs['pk'])
-        b = User.objects.get(username=a.business_owner)
         cat = list(User.objects.filter(groups__name='cloud_assessment_team').values_list('email', flat=True))
-        print(cat)
-        subject_line = "New App to Assess"
-        message_body = "Business owner: "+str(self.request.user)+" has approved an app ("+str(a.name)+") to be accredited. Please log into the App Accreditor and assess this application."
-        send_mail(subject_line, message_body, b.email, cat)
+        subject_line = "3DHB Risk Assessment: New App to Assess"
+        message_body = "Business owner: "+str(self.request.user)+" has approved an app ("+str(a.name)+") to be whitelisted. Please log into the App Accreditor and assess this application. You shold be prepared for this app to be tabled for a decision at the next CAT meeting."
+        send_mail(subject_line, message_body, settings.EMAIL_HOST_USER, cat)
         return super().form_valid(form)
 
     def get_initial(self):
         initial = super(ApplicationOwnerApproval, self).get_initial()
-        initial['assess_status'] = 'S'
+        initial['assess_status'] = 'A'
         initial['business_owner_date'] = datetime.date.today()
         initial['business_owner_approval'] = True
         return initial
@@ -314,6 +322,14 @@ class ApplicationDelete(SuccessMessageMixin, DeleteView):
 
 class InformationClassificationDetail(DetailView):
     model = InformationClassification
+
+    def get_context_data(self, **kwargs):
+        context = super(InformationClassificationDetail, self).get_context_data(**kwargs)
+        ic = InformationClassification.objects.get(app=self.kwargs['pk'])
+        if not ic.medical_in_confidence and not ic.statistical_unclassified and not ic.commercial_in_confidence and not ic.staff_in_confidence:
+            context['unclass'] = True
+
+        return context
 
 
 class InformationClassificationCreate(SuccessMessageMixin, CreateView):
@@ -591,7 +607,7 @@ class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
 
         subject_line = "App Accreditor CAT Decision"
         message_body = "To "+str(b)+", "+str(r)+".  "+"The cloud assessment team met "+str(d)+". They have decided that "+str(a.name)+" "+str(s)
-        send_mail(subject_line, message_body, "app_accreditor@3dhb.org.nz", [b, r])
+        send_mail(subject_line, message_body, settings.EMAIL_HOST_USER, [b, r])
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

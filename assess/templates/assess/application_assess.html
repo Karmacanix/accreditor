@@ -17,6 +17,7 @@
   <div class="w3-container w3-card-4">
     <ul class="w3-ul">
         <li><strong><small>Application:</small></strong><a href="{% url 'assess:application-detail' application.name %}">{{ application.name }}</a></li>
+        <li><strong><small>Version:</small></strong>{{ application.version }}</li>
         <li><strong><small>Purpose:</small></strong> {{ application.purpose }}</li>
         <li><strong><small>Suitable for:</small></strong>
           {% for application_type in application.application_type.all %}

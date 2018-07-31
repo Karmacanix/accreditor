@@ -7,17 +7,17 @@
 {% block head_title %}{% trans "Confirm Delete" %}{% endblock %}
 
 {% block content %}
-<div class="w3-container w3-half w3-margin-top">
+<div class="w3-container w3-margin-top">
   <header class="w3-container">
-    <h1>{% trans "Delete Information Classification Assessment" %}</h1>
+    <h1>{% trans "Delete Information Classification" %}</h1>
   </header>
-  <div class="w3-container w3-panel w3-red w3-card-4">
+  <div class="w3-container w3-panel w3-yellow w3-card-4">
     <h3>Warning!</h3>
-  	<p>You are about to delete Information Classification assessment for application -   <strong>{{ informationclassification.name|upper }}</strong></p>
+  	<p>You are about to delete the Information Classification app -   <strong>{{ informationclassification.app|upper }}</strong></p>
     <h5><strong>Are you sure?</strong></h5>
   	<form action="" method="POST">
   		{% csrf_token %}
-      <a class="w3-btn w3-section w3-blue" href="{% url 'assess:informationclassification-detail' informationclassification.id %}">{% trans "No" %}</a>
+      <a class="w3-btn w3-section w3-blue" href="{% url 'assess:informationclassification-detail' informationclassification.app %}">{% trans "No" %}</a>
   		<input class="w3-btn w3-section w3-green" type="submit" value="{% trans 'Yes' %}" />
   	</form>
   </div>

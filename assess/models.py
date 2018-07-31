@@ -26,6 +26,7 @@ class Application(models.Model):
 	requestor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="requestor")
 	business_owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="business_owner")
 	name = models.CharField(max_length=254, primary_key=True)
+	version = models.CharField(max_length=10)
 	website = models.URLField(max_length=200)
 	purpose = models.CharField(max_length=254)
 	cost = models.CharField(max_length=254)
@@ -104,7 +105,7 @@ class InformationClassification(models.Model):
 	staff_in_confidence = models.BooleanField(default=False, help_text="Identifiable employee and practitioner information that is not intended for the public domain")
 	commercial_in_confidence = models.BooleanField(default=False, help_text="Commercially sensitive information that needs protection from unauthorised access")
 	statistical_unclassified = models.BooleanField(default=False, help_text="Statistical or financial information that is non–identifiable")
-	unclassified = models.BooleanField(default=False, help_text="All other information")
+	unclassified = models.BooleanField(default=False, help_text="All other information. Cannot derive persons identity from data.")
 	special_handling_sensitive_patient = models.BooleanField(default=False, help_text="Sensitive patient information (eg VIP’s)")
 	special_handling_sensitive_disease = models.BooleanField(default=False, help_text="Sensitive categories of disease (eg Mental Health)")
 	special_handling_sensitive_abuse = models.BooleanField(default=False, help_text="Sensitive subjects (violence and abuse; pandemics)")
@@ -116,10 +117,10 @@ class InformationClassification(models.Model):
 
 class CloudQuestionnaire(models.Model):
 	app = models.OneToOneField(Application, on_delete=models.CASCADE, primary_key=True)
-	disclosure_risk = models.BooleanField(default=False, verbose_name='Privacy Breach', help_text="The information is publicly available or it can be de-identified so that its release into the public domain would not compromise our obligations to a person or an organisation.")
-	alteration_risk = models.BooleanField(default=False, verbose_name='Information Alteration', help_text="No person or organisation will be harmed if the information is altered by mistake or intentionally by a wrongdoer.")
-	loss_risk = models.BooleanField(default=False, verbose_name='Data Loss', help_text="No person or orginastion will be harmed if the information is lost by the cloud provider OR we can easily maintain a local copy of the information.")
-	continuity_risk = models.BooleanField(default=False, verbose_name='Business Continuity', help_text="We will be able to carry on our activities if the service is disrupted or is unavailable for an extended.")
+	disclosure_risk = models.BooleanField(default=False, verbose_name='Privacy Breach', help_text="If a data breach or release of information into the public domain occurred it would compromise our obligations to a person or an organisation.")
+	alteration_risk = models.BooleanField(default=False, verbose_name='Information Alteration', help_text="If the app's information is altered by mistake or intentionally by a wrongdoer, a person(s) or organisation(s) will be harmed.")
+	loss_risk = models.BooleanField(default=False, verbose_name='Data Loss', help_text="If the information is lost by the cloud provider OR we can easily maintain a local copy of the information, a person(s) or orginastion will be harmed.")
+	continuity_risk = models.BooleanField(default=False, verbose_name='Business Continuity', help_text="If the service is disrupted or is unavailable for an extended, we will be unable to carry out our activities .")
 
 	def _get_help_text(self, field_name):
 

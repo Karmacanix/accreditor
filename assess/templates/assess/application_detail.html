@@ -14,10 +14,10 @@
     <h1 class="w3-margin">Application - {{ application.get_assess_status_display }}</h1>
   </header>
   <br>
-  <h3>Details</h3>
+  <h3>{{ application.name }}</h3>
   <div class="w3-container w3-card-4">
     <ul class="w3-ul">
-        <li><strong><small>Application:</small></strong> {{ application.name }}</li>
+        <li><strong><small>Version:</small></strong> {{ application.version }}</li>
         <li><strong><small>Purpose:</small></strong> {{ application.purpose }}</li>
         <li><strong><small>Suitable for:</small></strong>
           {% for application_type in application.application_type.all %}
@@ -41,14 +41,14 @@
     <div class="w3-row">
       <ul class="w3-ul">
         {% if ic %}  
-          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:informationclassification-detail' application.name %}">{% trans "View Information Classification" %}</a></li>
+          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:informationclassification-detail' application.name %}">{% trans "View Information Classification" %}  </a> {% if unclass %}<span class="w3-tag w3-green">Unclassified</span>{% else %}<span class="w3-tag w3-yellow">In Confidence</span>{% endif %}{% if sph %}<span class="w3-tag w3-red">Special Handling</span>{% endif %}</li>
         {% else %}
           <li><span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span><a href="{% url 'assess:informationclassification-create' application.name %}">{% trans "Start Information Classification" %}</a></li>
         {% endif %}
         {% if cl %}  
-          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:cloudquestionnaire-detail' application.name %}">{% trans "View Cloud Questionnaire" %}</a></li>
+          <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:cloudquestionnaire-detail' application.name %}">{% trans "View Initial Risk Assessment" %}</a></li>
         {% else %}
-          <li><span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span><a href="{% url 'assess:cloudquestionnaire-create' application.name %}">{% trans "Start Cloud Questionnaire" %}</a></li>
+          <li><span class='w3-text-red'><i class="fa fa-times-circle fa-fw fa-1x"></i></span><a href="{% url 'assess:cloudquestionnaire-create' application.name %}">{% trans "Start Initial Risk Assessment" %}</a></li>
         {% endif %}
         {% if bc %}  
           <li><span class='w3-text-green'><i class="fa fa-check-circle fa-fw"></i></span><a href="{% url 'assess:ictriskassessment-detail' application.name %}">{% trans "View ICT Risk Assessment" %}</a></li>

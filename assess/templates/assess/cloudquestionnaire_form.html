@@ -4,29 +4,29 @@
 {% load account %}
 {% load i18n %}
 
-{% block head_title %}{% trans "Cloud Questionnaire" %}{% endblock %}
+{% block head_title %}{% trans "Initial Risk Assessment" %}{% endblock %}
 
 {% block content %}<!-- Header -->
 <div class="w3-container w3-margin-top">
   <header class="w3-black w3-opacity w3-padding-16">
-      <h1 class="w3-margin">Cloud questionnaire</h1>
+      <h1 class="w3-margin">Initial Risk Assessment</h1>
   </header>
   <br>
   <form class="w3-container w3-card-4 w3-padding" action="" method="post">
     {% csrf_token %}
     <div class="w3-row w3-border w3-padding">
-      <div class="w3-col m6 l6"><strong>Description</strong></div>
-      <div class="w3-col m2 l2"><strong>Yes/No</strong></div>
-      <div class="w3-col m4 l4"><strong>Risk</strong></div>
+      <div class="w3-col m8 l8"><strong>Potential risk</strong></div>
+      <div class="w3-col m2 l2n w3-center"><strong>Could occur?</strong></div>
+      <div class="w3-col m2 l2"><strong>Risk</strong></div>
     </div>
     {% for field in form %}
       {% if field == form.app %}
         <span hidden>{{ field }}</span>
       {% else %}
         <div class="w3-row w3-border w3-padding w3-white">
-          <div class="w3-col m6 l6">{{ field.help_text }}</div>
-          <div class="w3-col m2 l2">{{ field }}</div>
-          <div class="w3-col m4 l4">{{ field.label }}</div>
+          <div class="w3-col m8 l8">{{ field.help_text }}</div>
+          <div class="w3-col m2 l2 w3-center">{{ field }}</div>
+          <div class="w3-col m2 l2">{{ field.label }}</div>
         </div>
       {% endif %}
     {% endfor %}

@@ -13,9 +13,10 @@ class ApplicationForm(forms.ModelForm):
 	
 	class Meta:
 		model = Application
-		fields = ['name', 'purpose', 'application_type', 'website', 'cost', 'cost_type', 'requestor', 'business_owner', 'dhbs']
+		fields = ['name', 'version', 'purpose', 'application_type', 'website', 'cost', 'cost_type', 'requestor', 'business_owner', 'dhbs']
 		widgets = {			
 			'name': forms.TextInput(attrs={'class' : 'w3-input w3-border'}),
+			'version': forms.TextInput(attrs={'class' : 'w3-input w3-border'}),
 			'purpose': forms.Textarea(attrs={'class' : 'w3-input w3-border', 'cols': '40', 'rows': '3'}),
 			'cost_type': forms.RadioSelect(attrs={'class': 'w3-ul'}),
 			'requestor': forms.Select(attrs={'class' : 'w3-select w3-border', 'empty_value' : 'Choose a business owner'}),
@@ -97,12 +98,10 @@ class InformationClassificationForm(forms.ModelForm):
  		model = InformationClassification
  		fields = '__all__'
  		widgets = {			
-			'special_handling_sensitive_other': forms.TextInput(attrs={'class' : 'w3-input w3-border'}),
 			'medical_in_confidence': forms.CheckboxInput(attrs={'class' : 'w3-check'}),
 			'staff_in_confidence': forms.CheckboxInput(attrs={'class' : 'w3-check'}),
 			'commercial_in_confidence': forms.CheckboxInput(attrs={'class' : 'w3-check'}),
 			'statistical_unclassified': forms.CheckboxInput(attrs={'class' : 'w3-check'}),
-			'unclassified': forms.CheckboxInput(attrs={'class' : 'w3-check'}),
 			'special_handling_sensitive_patient': forms.CheckboxInput(attrs={'class' : 'w3-check'}),
 			'special_handling_sensitive_disease': forms.CheckboxInput(attrs={'class' : 'w3-check'}),
 			'special_handling_sensitive_abuse': forms.CheckboxInput(attrs={'class' : 'w3-check'}),

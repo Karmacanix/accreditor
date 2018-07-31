@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'django_countries',
     'django_select2',
     'simple_history',
-    #'anymail',
 
     # my apps
     'assess',
@@ -149,15 +148,13 @@ STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'assess:application-list'
 
-# ANYMAIL = {
-#     "MAILGUN_API_KEY": "a4c8297ba9e8d5b02c2f229cff530574-8b7bf2f1-3e430b47",
-#     "MAILGUN_SENDER_DOMAIN": 'sandbox8029a5fdef2d45a789df5dc1c3af2f14.mailgun.org',
-#     }
-
-# EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-# DEFAULT_FROM_EMAIL = "cranhurst@priest.com"
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.zoho.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'dave.rigby@karmacanix.co.nz'
+EMAIL_HOST_PASSWORD = 'Land0 Calri55ian'
+EMAIL_USE_TLS = True
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
