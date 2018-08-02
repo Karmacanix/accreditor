@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
@@ -24,10 +25,9 @@ def help(request):
         	comments = form.cleaned_data['comments']
         	name = form.cleaned_data['name']
         	message = name + ": " + email_from + ": " + comments
-        	sender = 'postmaster@sandbox8029a5fdef2d45a789df5dc1c3af2f14.mailgun.org'
-        	recipients = ['dhrigby@gmail.com']
+        	recipients = ['david.rigby@ccdhb.org.nz']
         	subject = 'App Acreditation Service Help Request'
-        	send_mail(subject, message, sender, recipients)
+        	send_mail(subject, message, settings.EMAIL_HOST_USER, recipients)
         	messages.add_message(
     			request, messages.SUCCESS, 'Message sent successfully.',
     			fail_silently=True,
