@@ -210,12 +210,26 @@ class PrivacyAssessmentForm(forms.ModelForm):
 
 class CATmeetingForm(forms.ModelForm):
 	u = User.objects.filter(groups__name='cloud_assessment_team')
+	a = Application.objects.filter(
+	        assess_status='A', 
+	        security_decision__isnull=False, 
+	        privacy_decision__isnull=False, 
+	        clinical_decision__isnull=False,
+        )
 	attendees = forms.ModelMultipleChoiceField(
-		queryset=u.distinct(), widget=Select2MultipleWidget(attrs={'class' : 'w3-input w3-border w3-xlarge'}))
+		required=True,
+		queryset=u.distinct(),
+		widget=Select2MultipleWidget(attrs={'class' : 'w3-input w3-border w3-xlarge'})
+		)
+	apps = forms.ModelMultipleChoiceField(
+		required=True,
+		queryset=a.distinct(),
+		widget=Select2MultipleWidget(attrs={'class' : 'w3-input w3-border w3-xlarge'})
+		)
 
 	class Meta:
 		model = CATmeeting
-		fields = ['meeting_date', 'attendees']
+		fields = ['meeting_date', 'attendees', 'apps']
 		widgets = {			
 			'meeting_date': forms.DateInput(attrs={'class' : 'w3-input w3-border'}),
 		}
@@ -231,9 +245,8 @@ class ApplicationDecisionForm(forms.ModelForm):
 
 	class Meta:
 		model = Application
-		fields = ['name', 'CATmeeting', 'assess_status']
+		fields = ['name', 'assess_status']
 		widgets = {			
-			'CATmeeting': forms.NumberInput(attrs={'class' : 'w3-input w3-border' }),
 			'assess_status': forms.RadioSelect(attrs={'class': 'w3-ul', }),
 		}
 

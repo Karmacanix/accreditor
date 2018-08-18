@@ -1,0 +1,93 @@
+{% load static %}
+{% load account %}
+{% load i18n %}
+{% load assess_tags %}
+
+<!-- Approval: ICT SECURITY -->
+    {% if request.user|has_group:"security" %}
+    {% if security_list %}
+    <br>
+    <h2>ICT Security Review</h2>
+    {% with app_list=security_list %}
+    
+  <div class="w3-row">
+<div class="w3-col m4 l4">
+<h3>Application Details</h3>
+    <table class="w3-table-all w3-hoverable w3-small w3-card-4">
+<thead>
+  <tr class="w3-light-grey">
+    <th>{% trans "Name" %}</th>
+    <th>{% trans "Version" %}</th>
+    <th>{% trans "Purpose" %}</th>
+    <th>{% trans "DHB(s)" %}</th>
+    <th>{% trans "App" %}<br>{% trans "Type(s)" %}</th>
+   </tr>
+  </thead>
+<tbody>
+	 {% for application in app_list %}
+        <tr>
+          <td><a class="w3-text-indigo" href="{% url 'assess:application-security-assess' application.name %}">{{ application.name }}</a></td>
+			<td>{{ application.version }}</td>
+			<td>{{ application.purpose }}</td>
+			<td>
+				{% for dhb in application.dhbs.all %}
+					{{ dhb.name }}
+					{% if forloop.last %}.{% else %},{% endif %}
+				{% endfor %}
+			</td>
+			<td>
+				{% for application_type in application.application_type.all %}
+					{% autoescape off %} {{ application_type.icon_html }}{% endautoescape %}{{ application_type.name }}
+				{% endfor %}
+			</td>
+		</tr>
+	{% endfor %}
+</tbody>
+</table>
+</div>
+<div class="w3-col m4 l4">
+
+<h3>Risk Rating</h3>
+    <table class="w3-table-all w3-hoverable w3-small w3-card-4">
+  <thead>
+  <tr class="w3-light-grey">
+    <th class="w3-center">{% trans "ICT" %}<br>{% trans "Security" %}</th>
+    <th class="w3-center">{% trans "Privacy" %}<br>{% trans "Officer" %}</th>
+    <th class="w3-center">{% trans "Clinical" %}<br>{% trans "Advisor" %}</th>
+   </tr>
+</thead>
+<tbody>
+	{% for application in app_list %}
+        <tr>
+<td class="{% if application.security_decision == 'N' %} w3-green{% elif application.security_decision == 'H' %} w3-red{% elif application.security_decision == 'E' %} w3-purple{% elif application.security_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %}">{{ application.get_security_decision_display }}</td>
+<td class="{% if application.privacy_decision == 'N' %} w3-green{% elif application.privacy_decision == 'H' %} w3-red{% elif application.privacy_decision == 'E' %} w3-purple{% elif application.privacy_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %}">{{ application.get_privacy_decision_display }}</td>
+<td class="{% if application.clinical_decision == 'N' %} w3-green{% elif application.clinical_decision == 'H'%} w3-red{% elif application.clinical_decision == 'E' %} w3-purple{% elif application.clinical_decision == 'L' %} w3-orange{% else %} w3-grey{% endif %}">{{ application.get_clinical_decision_display }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<div class="w3-col m4 l4">
+<h3>Decisions</h3>
+    <table class="w3-table-all w3-hoverable w3-small w3-card-4">
+
+<thead>
+  <tr class="w3-light-grey">
+    <th class="w3-center w3-tiny">{% trans "Cloud" %}<br>{% trans "Assessment Team" %}</th>
+    <th class="w3-center w3-tiny">{% trans "Information Privacy" %} &<br>{% trans "Security Governance" %}</th>
+  </tr>
+</thead>
+<tbody>
+{% for application in app_list %}
+        <tr>
+{% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% elif application.assess_status == 'P' %}<td class="w3-white">{{ application.get_assess_status_display }}</td>{% elif application.assess_status == 'R' %}<td class="w3-black">{{ application.get_assess_status_display }}</td>{% endif %}
+{% if application.escalate_IPSG %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% else %}<td class="w3-grey"></td>{% endif %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+{% endwith %}
+{% endif %}
+{% endif %}

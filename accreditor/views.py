@@ -10,8 +10,16 @@ import requests
 from accreditor.forms import HelpForm
 
 # Create your views here.
-def guides(request):	
-	return render(request, 'guides.html')
+def home(request):	
+	return render(request, 'home.html')
+
+
+def process(request):    
+    return render(request, 'process.html')
+
+
+def guides(request):    
+    return render(request, 'guides.html')
 
 
 def help(request):

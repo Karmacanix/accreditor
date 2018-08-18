@@ -48,6 +48,9 @@ class Application(models.Model):
 		('A', 'Assessing'),
 		('R', 'Rejected'),
 		('P', 'Approved'),
+		('E', 'Escalated'),
+		('I', 'IPSG Approved'),
+		('X', 'IPSG Rejected'),
 	)
 	assess_status = models.CharField(
 		max_length=1,
@@ -342,7 +345,16 @@ class PrivacyAssessment(models.Model):
 
 class CATmeeting(models.Model):
 	meeting_date = models.DateField(default=datetime.date.today())
+	is_final = models.BooleanField(default=False)
 	attendees = models.ManyToManyField(User, related_name='attendees')
+	apps = models.ManyToManyField(
+		Application,
+		limit_choices_to ={
+            'assess_status': 'A', 
+            'security_decision__isnull':False, 
+            'privacy_decision__isnull':False, 
+            'clinical_decision__isnull':False,
+            })
 	
 
 class IPSGmeeting(models.Model):

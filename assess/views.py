@@ -6,6 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMultiAlternatives, send_mail
+from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.forms.models import model_to_dict
 from django.shortcuts import render, get_object_or_404
@@ -518,19 +519,35 @@ class CatMeetingList(ListView):
     model = CATmeeting
     template_name="assess/catmeeting_list.html"
 
-
-class CatMeetingDetail(DetailView):
-    model = CATmeeting
-
     def get_context_data(self, **kwargs):
-        context = super(CatMeetingDetail, self).get_context_data(**kwargs)
-        context['decision_list'] = Application.objects.filter(CATmeeting=self.kwargs['pk'])
+        context = super(CatMeetingList, self).get_context_data(**kwargs)
         context['app_list'] = Application.objects.filter(
             assess_status='A', 
             security_decision__isnull=False, 
             privacy_decision__isnull=False, 
             clinical_decision__isnull=False,
             CATmeeting__isnull=True,
+            )
+        context['ready'] = Application.objects.filter(
+            assess_status='A', 
+            security_decision__isnull=False, 
+            privacy_decision__isnull=False, 
+            clinical_decision__isnull=False,
+            CATmeeting__isnull=True,
+            ).count()
+        return context 
+
+
+class CatMeetingDetail(DetailView):
+    model = CATmeeting
+
+    def get_context_data(self, **kwargs):
+        context = super(CatMeetingDetail, self).get_context_data(**kwargs)
+        context['ready_app_list'] = Application.objects.filter(
+            assess_status='A', 
+            security_decision__isnull=False, 
+            privacy_decision__isnull=False, 
+            clinical_decision__isnull=False,
             )
         return context 
 
@@ -563,21 +580,14 @@ class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
     form_class = ApplicationDecisionForm
     template_name="assess/catmeeting_decision_form.html"
     success_message = 'Application decision updated successfully!'
-    success_url = reverse_lazy('assess:catmeeting-list')
 
     def post(self, request, *args, **kwargs):
-        cat = self.kwargs['catmeeting_id']
-        app = self.kwargs['pk']
-        req = Application.objects.filter(name=app)
-        print("Cat:",cat, "App:", app, "Req:", req)
-        # get variables - app, cat meeting number and the decision
-        # save the application model with the new status and the CAT meeting
-        # email the requestor and business owner.
+        req = Application.objects.filter(name=self.kwargs['pk'])
         if request.method == 'POST':
             f = ApplicationDecisionForm(request.POST)
             d = f['cat_decision'].value()
             if d == "E":
-                req.update(escalate_IPSG = True)
+                req.update(assess_status = "E")
 
             if d == "R":
                 req.update(assess_status = "R")
@@ -585,41 +595,13 @@ class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
             if d == "P":
                 req.update(assess_status = "P")
 
-            if not f['CATmeeting'].value():
-                req.update(CATmeeting = cat) 
-
-        return HttpResponseRedirect(reverse('assess:catmeeting-list'))
-
-    def form_valid(self, form):
-        a = Application.objects.get(pk=self.kwargs['pk'])
-        b = User.objects.get(username=a.business_owner)
-        r = User.objects.get(username=a.requestor)
-        c = CATmeeting.objects.get(pk=a.catmeeting)
-        d = c.meeting_date
-        if a.assess_status == 'R':
-            s = "is not secure or private enough and has been Blacklisted from use at the DHB."
-
-        if a.assess_status == 'A':
-            s = "met 3DHB's security and privacy policy threshold for compliance. It has been Whitelisted for use at the DHB."
-
-        if a.assess_status == 'E':
-            s = "exceeded our comfort threshold for reasonable privacy and security risks.  This request has been escalated to the IPSG."
-
-        subject_line = "App Accreditor CAT Decision"
-        message_body = "To "+str(b)+", "+str(r)+".  "+"The cloud assessment team met "+str(d)+". They have decided that "+str(a.name)+" "+str(s)
-        send_mail(subject_line, message_body, settings.EMAIL_HOST_USER, [b, r])
-        return super().form_valid(form)
+        return HttpResponseRedirect(reverse('assess:catmeeting-detail', 
+            kwargs={'pk': self.kwargs['catmeeting_id']}))
 
     def get_context_data(self, **kwargs):
         context = super(CatMeetingDecisionUpdate, self).get_context_data(**kwargs)
-        context['catmeeting'] = self.kwargs['catmeeting_id']
-        context['app'] = self.kwargs['pk']
+        context['catmeeting_id'] = self.kwargs['catmeeting_id']
         return context 
-
-    def get_queryset(self):
-        queryset = super(CatMeetingDecisionUpdate, self).get_queryset()
-        queryset = queryset.filter(name=self.kwargs['pk'])
-        return queryset
 
 
 class IPSGMeetingDetailView(DetailView):

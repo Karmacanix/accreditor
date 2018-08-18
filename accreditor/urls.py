@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from accreditor.views import guides, help
+from accreditor.views import guides, help, home, process
 from assess.views import ApplicationList
 
 
@@ -25,5 +25,6 @@ urlpatterns = [
     path('assess/', include('assess.urls')),
     path('guides/', guides, name='guides'),
     path('help/', help, name='help'),
-    path('', ApplicationList.as_view(), name='home'),  
+    path('', home, name='home'),
+    path('process/', process, name='process'), 
 ]

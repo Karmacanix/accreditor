@@ -20,7 +20,7 @@ from assess import views
 app_name = 'assess'
 urlpatterns = [
     path('application/create/', views.ApplicationCreate.as_view(), name='application-create'),
-    path('', views.ApplicationList.as_view(), name='application-list'),
+    path('application/list/', views.ApplicationList.as_view(), name='application-list'),
     path('application/list/assess/', views.ApplicationAssessList.as_view(), name='application-assess-list'),
     path('application/list/approve/', views.ApplicationApproveList.as_view(), name='application-approve-list'),
     path('application/list/request/', views.ApplicationRequestList.as_view(), name='application-request-list'),
@@ -35,7 +35,7 @@ urlpatterns = [
     path('CAT/', views.CatMeetingList.as_view(), name='catmeeting-list'),
     path('CAT/<int:pk>/', views.CatMeetingDetail.as_view(), name='catmeeting-detail'),
     path('CAT/create/', views.CatMeetingCreate.as_view(), name='catmeeting-create'),
-    path('CAT/<str:pk>/decision/<int:catmeeting_id>/', views.CatMeetingDecisionUpdate.as_view(), name='catmeeting-decision-update'),
+    path('CAT/<int:catmeeting_id>/<str:pk>/decision/', views.CatMeetingDecisionUpdate.as_view(), name='catmeeting-decision-update'),
     path('CAT/<str:pk/delete/', views.CatMeetingDelete.as_view(), name='catmeeting-delete'),
     path('CAT/<str:pk>/update/', views.CatMeetingUpdate.as_view(), name='catmeeting-update'),
     path('cloudquestionnaire/<str:pk>/', views.CloudQuestionnaireDetail.as_view(), name='cloudquestionnaire-detail'),

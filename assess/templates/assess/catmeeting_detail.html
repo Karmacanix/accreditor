@@ -11,10 +11,9 @@
 <!-- Header -->
 <div class="w3-container w3-margin-top">
   <header class="w3-black w3-opacity w3-padding-16">
-    <h1 class="w3-margin">CAT Meeting</h1>
+    <h1 class="w3-margin">CAT Meeting: {{ catmeeting.id }}</h1>
   </header>
   {% if catmeeting %}
-  {% with catmeeting.id as catmeeting_id %}
   <br>
   <div class="w3-container w3-card-4">
     <div class="w3-row w3-border-bottom w3-padding-16">
@@ -24,46 +23,64 @@
     <div class="w3-row w3-border-bottom w3-padding-16">
       <div class="w3-col m1 l1">Attendees:</div>
       <div class="w3-col m1 l1">
-        {% for attendees in catmeeting.attendees.all %}{{ attendees }}{% if forloop.last %}.{% else %}, {% endif %}{% endfor %}</div>
+         <ul>
+          {% for attendees in catmeeting.attendees.all %}
+            <li>{{ attendees }}{% if forloop.last %}.{% else %}, {% endif %}</li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
-   
-      {% if decision_list %}
-      
-    <div class="w3-row w3-padding-16">
-        <h4>Agenda Items</h4>
-        <table class="w3-table-all w3-hoverable w3-card-4 w3-third">
+   <div class="w3-row w3-border-bottom w3-padding-16">
+      <div class="w3-col m1 l1">Apps discussed:</div>
+      <div class="w3-col m5 l5">
+        <table class="w3-table-all w3-hoverable w3-card-4">
           <thead>
-            <tr class="w3-light-grey w3-tiny">
+            <tr class="w3-light-grey">
               <th>{% trans "Name" %}</th>
               <th>{% trans "Purpose" %}</th>
               <th>{% trans "Decision" %}</th>
+              <th>{% trans "Edit Decision" %}</th>
             </tr>
           </thead>
           <tbody>
-            {% for application in decision_list %}
+            {% for apps in catmeeting.apps.all %}
             <tr>
-              <td>{{ application.name }}</td>
-              <td>{{ application.purpose }}</td>
-              
-
-{% if application.escalate_IPSG %}<td class="w3-yellow">Escalated to IPSG.</td>{% else %}<td class="w3-blue">{{ application.get_assess_status_display }}</td>{% endif %}
-        
+              <td>{{ apps.name }}</td>
+              <td>{{ apps.purpose }}</td>
+              {% if apps.assess_status %}
+                {% if apps.assess_status == 'R' %}
+                  <td class="w3-black w3-text-red">Rejected</td>
+                {% endif %}
+                {% if apps.assess_status == 'P' %}
+                  <td class="w3-white w3-text-indigo">Approved</td>
+                {% endif %}
+                {% if apps.assess_status == 'E' %}
+                  <td class="w3-yellow">Escalated to IPSG</td>
+                {% endif %}
+              {% endif %}
+              <td><a class="w3-button w3-blue" href="{% url 'assess:catmeeting-decision-update' pk=apps.name catmeeting_id=catmeeting.id %}">Edit</a></td>
              </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
-      <br>
-      {% endif %}
-  </div>
-  
-  {% if app_list %}
-    <br>
-    <h3>Apps (ready to table at CAT)</h3>
-    <p>A list of apps that have completed security, privacy and clinical assessments and are now ready for a decision to be made by the CAT team. Click 'add' to add an app to the CAT meeting agenda. </p>
+    </div>
+    <div class="w3-row w3-padding-16">
+      <a class="w3-button w3-padding w3-red" href="{% url 'assess:catmeeting-list' %}">Cancel</a>
+      <a class="w3-button w3-padding w3-blue" href="{% url 'assess:catmeeting-update' catmeeting.id %}">Edit</a>
+      <button class="w3-button w3-padding w3-green" type="Submit">Finalise Meeting</button>
+    </div>
+  {% endif %}
+</div>
+<br>
+<div class="w3-container w3-card-4">
+  {% if ready_app_list %}
+  <div class="w3-row w3-border-bottom w3-padding">
+    <h3>Apps (ready for CAT):</h3>
+        <p>A list of apps that have completed security, privacy and clinical assessments and are now ready for a decision to be made by the CAT team. Click 'add' to add an app to the CAT meeting agenda.</p>
     <table class="w3-table-all w3-hoverable w3-card-4">
       <thead>
-        <tr class="w3-light-grey w3-tiny">
+        <tr class="w3-light-grey">
           <th>{% trans "Action" %}</th>
           <th>{% trans "Name" %}</th>
           <th>{% trans "Purpose" %}</th>
@@ -77,9 +94,9 @@
         </tr>
       </thead>
       <tbody>
-        {% for application in app_list %}
+        {% for application in ready_app_list %}
         <tr>
-          <td><a class="w3-button w3-blue w3-padding-large w3-small" href="{% url 'assess:catmeeting-decision-update' pk=application.name catmeeting_id=catmeeting_id %}">Add</a></td>
+          <td><a class="w3-button w3-blue w3-padding-large" href="{% url 'assess:catmeeting-decision-update' pk=application.name catmeeting_id=catmeeting.id %}">Add</a></td>
           <td>{{ application.name }}</td>
           <td>{{ application.purpose }}</td>
           <td>{{ application.requestor }}</td>
@@ -97,12 +114,9 @@
         {% endfor %}
       </tbody>
     </table>
-    
+    <br>
+  </div>
     {% endif %}
-    {% endwith %}
-    {% else %}
-    <p>No jimmy jims uncle pancakes</p>
-    {% endif %}
-
+   
 </div>
 {% endblock %}
