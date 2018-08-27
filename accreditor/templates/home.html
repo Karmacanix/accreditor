@@ -19,39 +19,22 @@
 </header>
 
 <!-- First Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
+<div class="w3-row-padding w3-padding-64 w3-border-bottom w3-container">
+  <div class="w3-content">    
       <h1>Our collective responsibility</h1>
-      <h5 class="w3-padding-32">Our collective responsibility across the health sector is to ensure each patient’s medical information is kept private. This service is to help healthcare professionals select software that meets our privacy requirements.</h5>
-      <h5 class="w3-padding-32">Click here to see all software that have been assessed as private and secure for use. If you would like to use any of this software please log a call with ICT.</h5>
-      <h5 class="w3-padding-32">Click here to see the software that is not safe for use.</h5>
-
-
-      <p class="w3-text-grey">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-        laboris nisi ut aliquip ex ea commodo consequat.</p>
-    </div>
-
-    <div class="w3-third w3-center">
-      <span><i class="fas fa-lock"></i> w3-padding-64 w3-text-red"></span>
-    </div>
-  </div>
-</div>
-
-<!-- Second Grid -->
-<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-third w3-center">
-      <i class="fas fa-user-secret fa-7x w3-padding-64 w3-text-red w3-margin-right"></i>
-    </div>
-
-    <div class="w3-twothird">
-      <h5 class="w3-padding-32">If you have software you want to use and it’s not listed, you will have to assess it, to ensure it meets our privacy policy . We have a commitment to our patients to keep their medical information private and secure. To show due diligence we have designed a series of self-assessments that you can complete.</h5>
-      <h5 class="w3-padding-32">If you would like to learn more about the Privacy and Security assessment process <a href="{% url 'process' %}">click here.</a></h5>
-
-      <p class="w3-text-grey">If you would like someone from the privacy and security team contact you directly, fill out this <a href="{% url 'home' %}">form here.</a></p>
-    </div>
+      <h5 class="w3-padding-16">Our collective responsibility across the health sector is to ensure each patient’s medical information is kept private. This service is to help healthcare professionals select software that meets our privacy requirements.</h5>
+      <br>
+      <h3>Application List</h3>
+      <h5><a class="w3-text-indigo" href="{% url 'assess:application-list' %}">Click here</a> to view all software already assessed.</h5>
+ <br>
+   
+      <h5 class="w3-padding-16">If you have software you would like to use and it’s not listed, you will have start the assessment process, to ensure it meets our privacy policy. We have a commitment to our patients to keep their medical information private and secure. To show due diligence we have designed a series of self-assessments for you to complete.</h5>
+      <br>
+      <h3>The Process</h3>
+      <h5>If you would like to learn more about the Privacy and Security assessment process <a class="w3-text-indigo" href="{% url 'process' %}">click here.</a></h5>
+<br>
+<h3>Contact Us</h3>
+      <h5>If you would like someone from the privacy and security team contact you directly, fill out this <a class="w3-text-indigo" href="{% url 'help' %}">form here.</a></h5>
   </div>
 </div>
 
