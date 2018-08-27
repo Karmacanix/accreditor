@@ -22,6 +22,7 @@ from .forms import ApplicationForm, ApplicationSubmitForm, ApplicationSecurityDe
 from .forms import ApplicationPrivacyDecisionForm, ApplicationClinicalDecisionForm, ApplicationOwnerApprovalForm
 from .forms import InformationClassificationForm, CloudQuestionnaireForm, ICTRiskAssessmentForm 
 from .forms import ICTVendorAssessmentForm, PrivacyAssessmentForm, CATmeetingForm, ApplicationDecisionForm
+from .forms import CATmeetingFinaliseForm
 
 # Create your views here.
 class ApplicationList(ListView):
@@ -563,16 +564,16 @@ class CatMeetingUpdate(SuccessMessageMixin, UpdateView):
     model = CATmeeting
     form_class = CATmeetingForm
     success_message = 'CAT Meeting successfully updated!'
-    success_url = reverse_lazy('assess:catmeeting-list')
+
+    def get_success_url(self):
+        return reverse('assess:catmeeting-detail', kwargs={'pk': self.kwargs['pk']})
 
 
 class CatMeetingDelete(SuccessMessageMixin, DeleteView):
     model = CATmeeting
     success_message = "CAT Meeting deleted!"
     template_name="assess/catmeeting_confirm_delete.html"
-
-    def get_success_url(self):
-        return reverse('assess:catmeeting-detail', kwargs={'pk': self.kwargs['pk']})
+    success_url = reverse_lazy('assess:catmeeting-list')
     
 
 class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
@@ -586,6 +587,9 @@ class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
         if request.method == 'POST':
             f = ApplicationDecisionForm(request.POST)
             d = f['cat_decision'].value()
+            for cat in CATmeeting.objects.filter(id=self.kwargs['catmeeting_id']):
+                cat.apps.add(Application.objects.get(name=self.kwargs['pk']))
+
             if d == "E":
                 req.update(assess_status = "E")
 
@@ -601,8 +605,37 @@ class CatMeetingDecisionUpdate(SuccessMessageMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(CatMeetingDecisionUpdate, self).get_context_data(**kwargs)
         context['catmeeting_id'] = self.kwargs['catmeeting_id']
-        return context 
+        return context
 
+
+class CatMeetingFinalUpdate(SuccessMessageMixin, UpdateView):
+    model = CATmeeting
+    form_class = CATmeetingFinaliseForm
+    template_name="assess/catmeeting_confirm_final.html"
+    success_message = 'CAT Meeting has been finalised!'
+
+    def post(self, request, *args, **kwargs):
+        cat = CATmeeting.objects.filter(id=self.kwargs['pk'])
+        if request.method == 'POST':
+            f = CATmeetingFinaliseForm(request.POST)
+            cat.update(is_final=True)
+
+        return HttpResponseRedirect(reverse('assess:catmeeting-detail', 
+            kwargs={'pk': self.kwargs['pk']}))
+
+
+    # def form_valid(self, form):
+    #     a = CATmeeting.objects.get(pk=self.kwargs['pk'])
+    #     b = User.objects.get(username=a.business_owner)
+    #     subject_line = "3DHB Risk Assessment: Approval to proceed required"
+    #     message_body = "User: "+str(self.request.user)+" has initiated the app accredition process. You have been nominated by the requestor as the future Business Owner for "+str(a.name)+". Due to the time and resources required by this process, you will need to provide an approval to continue. Please log into the App Accreditor and decide whether to accept or decline this assessment request."
+    #     send_mail(subject_line, message_body, settings.EMAIL_HOST_USER, [b.email])
+    #     return super().form_valid(form)
+
+    def get_initial(self):
+        initial = super(CatMeetingFinalUpdate, self).get_initial()
+        initial['is_final'] = True
+        return initial
 
 class IPSGMeetingDetailView(DetailView):
     pass

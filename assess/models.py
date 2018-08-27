@@ -347,14 +347,7 @@ class CATmeeting(models.Model):
 	meeting_date = models.DateField(default=datetime.date.today())
 	is_final = models.BooleanField(default=False)
 	attendees = models.ManyToManyField(User, related_name='attendees')
-	apps = models.ManyToManyField(
-		Application,
-		limit_choices_to ={
-            'assess_status': 'A', 
-            'security_decision__isnull':False, 
-            'privacy_decision__isnull':False, 
-            'clinical_decision__isnull':False,
-            })
+	apps = models.ManyToManyField(Application, related_name='apps')
 	
 
 class IPSGmeeting(models.Model):

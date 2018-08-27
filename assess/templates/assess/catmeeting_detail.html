@@ -16,20 +16,29 @@
   {% if catmeeting %}
   <br>
   <div class="w3-container w3-card-4">
-    <div class="w3-row w3-border-bottom w3-padding-16">
+    <div class="w3-row w3-padding-16">
       <div class="w3-col m1 l1">Date:</div>
       <div class="w3-col m1 l1">{{ catmeeting.meeting_date }}</div>
     </div>
-    <div class="w3-row w3-border-bottom w3-padding-16">
+    <div class="w3-row w3-padding-16">
       <div class="w3-col m1 l1">Attendees:</div>
-      <div class="w3-col m1 l1">
-         <ul>
+      <div class="w3-col m2 l2 w3-card-4">
+        <ul>
           {% for attendees in catmeeting.attendees.all %}
             <li>{{ attendees }}{% if forloop.last %}.{% else %}, {% endif %}</li>
           {% endfor %}
         </ul>
       </div>
+      <div class="w3-row w3-border-bottom w3-padding-16">
+        <div class="w3-col m3 l3">
+        {% if not catmeeting.is_final %}
+        <br>
+          <a class="w3-button w3-blue w3-right" href="{% url 'assess:catmeeting-update' catmeeting.id %}">Edit</a>
+        {% endif %}
+      </div>
     </div>
+    </div>
+  {% if catmeeting.apps.all %}
    <div class="w3-row w3-border-bottom w3-padding-16">
       <div class="w3-col m1 l1">Apps discussed:</div>
       <div class="w3-col m5 l5">
@@ -39,7 +48,9 @@
               <th>{% trans "Name" %}</th>
               <th>{% trans "Purpose" %}</th>
               <th>{% trans "Decision" %}</th>
-              <th>{% trans "Edit Decision" %}</th>
+              {% if not catmeeting.is_final %}
+                <th>{% trans "Edit Decision" %}</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -58,26 +69,38 @@
                   <td class="w3-yellow">Escalated to IPSG</td>
                 {% endif %}
               {% endif %}
-              <td><a class="w3-button w3-blue" href="{% url 'assess:catmeeting-decision-update' pk=apps.name catmeeting_id=catmeeting.id %}">Edit</a></td>
+              {% if not catmeeting.is_final %}
+                <td><a class="w3-button w3-blue" href="{% url 'assess:catmeeting-decision-update' pk=apps.name catmeeting_id=catmeeting.id %}">Edit</a></td>
+              {% endif %}
              </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
+     {% endif %}
+    <div class="w3-row w3-border-bottom w3-padding-16">
+      <div class="w3-col m1 l1">Document Status:</div>
+      <div class="w3-col m1 l1">{% if catmeeting.is_final %}<span class="w3-tag w3-blue">Final</span>{% else %}<span class="w3-tag w3-red">Draft</span>{% endif %}</div>
+    </div>
     <div class="w3-row w3-padding-16">
-      <a class="w3-button w3-padding w3-red" href="{% url 'assess:catmeeting-list' %}">Cancel</a>
-      <a class="w3-button w3-padding w3-blue" href="{% url 'assess:catmeeting-update' catmeeting.id %}">Edit</a>
-      <button class="w3-button w3-padding w3-green" type="Submit">Finalise Meeting</button>
+      <a class="w3-button w3-red" href="{% url 'assess:catmeeting-list' %}">Cancel</a>
+      {% if not catmeeting.is_final %}
+      <a class="w3-button w3-yellow" href="{% url 'assess:catmeeting-delete' catmeeting.id %}">Delete</a>
+        {% if catmeeting.apps.all %}
+          <a class="w3-button w3-green" href="{% url 'assess:catmeeting-final-update' catmeeting.id %}">Finalise Meeting</a>
+        {% endif %}
+      {% endif %}
     </div>
   {% endif %}
 </div>
 <br>
+{% if not catmeeting.is_final %}
 <div class="w3-container w3-card-4">
   {% if ready_app_list %}
   <div class="w3-row w3-border-bottom w3-padding">
-    <h3>Apps (ready for CAT):</h3>
-        <p>A list of apps that have completed security, privacy and clinical assessments and are now ready for a decision to be made by the CAT team. Click 'add' to add an app to the CAT meeting agenda.</p>
+    <h3>Apps ready for CAT decision:</h3>
+        <p>A list of apps that are ready for a decision to be made by the CAT team. Click 'add' to add an app to the CAT meeting above.</p>
     <table class="w3-table-all w3-hoverable w3-card-4">
       <thead>
         <tr class="w3-light-grey">
@@ -116,6 +139,7 @@
     </table>
     <br>
   </div>
+    {% endif %}
     {% endif %}
    
 </div>

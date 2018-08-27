@@ -28,7 +28,7 @@
   </div>
   <br>
   <div class="w3-row">
-          <a class="w3-button w3-section w3-red w3-ripple w3-large" href="{% url 'assess:catmeeting-list' %}">{% trans "Cancel" %}</a>
+          <a class="w3-button w3-section w3-red w3-ripple w3-large" href="{% url 'assess:catmeeting-detail' catmeeting.id %}">{% trans "Cancel" %}</a>
         <button class="primaryAction w3-button w3-section w3-green w3-ripple w3-large" type="submit">{% trans "Save" %}</button>
       </div>
       </form>
