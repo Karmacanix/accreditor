@@ -556,8 +556,10 @@ class CatMeetingDetail(DetailView):
 class CatMeetingCreate(SuccessMessageMixin, CreateView):
     model = CATmeeting
     form_class   = CATmeetingForm
-    success_message = 'CAT Meeting successfully saved!'
-    success_url = reverse_lazy('assess:catmeeting-list')
+    success_message = 'CAT Meeting successfully created!'
+
+    def get_success_url(self):
+        return reverse('assess:catmeeting-detail', kwargs={'pk': self.object.id})
 
 
 class CatMeetingUpdate(SuccessMessageMixin, UpdateView):
